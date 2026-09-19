@@ -33,6 +33,23 @@ HTML page. No web fonts, no fallbacks: every specimen is the real font.
 
 ## Build
 
+Three routes, in increasing order of what they ask of your machine.
+
+**Nothing installed, no session.** Push this repo to GitHub. The workflow in
+`.github/workflows/build.yml` installs TeX Live on a runner, rebuilds the page
+and attaches it to the run; download it from the Actions tab. Free without a
+minute cap on public repositories. Good for occasional rebuilds, useless for an
+iterative design loop.
+
+**Nothing installed, full shell.** Open the repo in a GitHub Codespace. The
+`.devcontainer` provisions TeX Live and the Python tools on first launch, and
+you get a Linux machine in a browser tab. Free tier is 120 core-hours a month,
+which is about 60 hours on the default 2-core box, plus 15 GB of storage.
+Delete codespaces rather than stopping them: a stopped one still consumes the
+storage quota.
+
+**Local.**
+
     ./setup.sh
     python3 scripts/build.py
 
