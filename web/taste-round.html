@@ -1,0 +1,630 @@
+<title>Taste Round</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,700;1,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,700;1,400&family=Fira+Sans:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Serif:ital,wght@0,400;0,700;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Literata:ital,wght@0,400;0,700;1,400&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Newsreader:ital,wght@0,400;0,700;1,400&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,700;1,400&family=Spectral:ital,wght@0,400;0,700;1,400&family=Vollkorn:ital,wght@0,400;0,700;1,400&family=Work+Sans:ital,wght@0,400;0,700;1,400&display=block">
+<style>
+:root{
+  box-sizing:border-box;
+  --bg:#ececeb; --panel:#fbfbfa; --ink:#191b1e; --dim:#63686e; --rule:#d3d4d2;
+  --accent:#2f6072; --warm:#8a5a35; --paper:#ffffff; --shadow:rgba(20,22,26,.13);
+  --ui:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --zoom:1;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#121316; --panel:#1a1c1f; --ink:#e7e8e6; --dim:#9aa0a6; --rule:#2e3136;
+    --accent:#7fb6c9; --warm:#c99a63; --shadow:rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121316; --panel:#1a1c1f; --ink:#e7e8e6; --dim:#9aa0a6; --rule:#2e3136;
+  --accent:#7fb6c9; --warm:#c99a63; --shadow:rgba(0,0,0,.5);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%}
+body{
+  margin:0;min-height:100%;background:var(--bg);color:var(--ink);
+  font-family:var(--ui);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;
+}
+button{font:inherit;color:inherit}
+a{color:var(--accent)}
+
+/* ---------- chrome ---------- */
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--panel);border-bottom:1px solid var(--rule)}
+.bar{display:flex;align-items:center;gap:14px;padding:9px 16px;flex-wrap:wrap}
+.mark{font-weight:600;letter-spacing:-.01em;margin-right:2px}
+.mark span{color:var(--dim);font-weight:400}
+nav{display:flex;gap:2px;margin-left:auto}
+nav button{background:none;border:1px solid transparent;border-radius:6px;padding:5px 11px;cursor:pointer;color:var(--dim)}
+nav button[aria-current="true"]{color:var(--ink);border-color:var(--rule);background:var(--bg)}
+nav button:hover{color:var(--ink)}
+.meter{height:2px;background:var(--rule)}
+.meter i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s ease}
+main{max-width:1180px;margin:0 auto;padding-block:22px 132px;padding-inline:16px}
+.view{display:none}
+.view.on{display:block}
+
+/* ---------- specimen paper ----------
+   Every specimen sits in the same 4.7 in measure the maths bench uses, 451 px, at
+   its typeset size: 14 px body text is 10.5 pt. The family's own x-height scale
+   (--s) holds x-height constant at 0.462 em across the field, as the bench does.
+   A window narrower than the paper scrolls it sideways rather than shrinking it. */
+.paperwrap{overflow-x:auto}
+.paper{
+  width:491px;padding:20px 20px 16px;background:var(--paper);color:#191b1e;border-radius:3px;
+  box-shadow:0 1px 2px var(--shadow),0 8px 24px -12px var(--shadow);zoom:var(--zoom);
+  line-height:1.35;text-align:justify;hyphens:auto;-webkit-hyphens:auto;
+}
+.paper.inverted{background:#16181b;color:#e7e8e6}
+.paper p,.paper ol,.paper ul{margin:0}
+.paper p+p,.paper p+ol,.paper p+ul{margin-top:calc(.55em * var(--s))}
+.paper .body{font-size:calc(14px * var(--s))}
+.paper .h{font-size:calc(14px * var(--s));font-weight:700;margin-bottom:calc(.6em * var(--s));text-align:left}
+.paper .eyebrow{font-size:calc(11px * var(--s));letter-spacing:.12em;text-transform:uppercase;text-align:left}
+.paper .title{font-size:calc(19px * var(--s));font-weight:700;line-height:1.2;text-align:left;margin-bottom:calc(.5em * var(--s))}
+.paper ol,.paper ul{padding-left:1.4em;font-size:calc(14px * var(--s))}
+.paper li+li{margin-top:.15em}
+.paper table{border-collapse:collapse;font-size:calc(12px * var(--s));font-variant-numeric:tabular-nums;text-align:left;width:100%}
+.paper th{font-weight:400;font-variant:small-caps;letter-spacing:.04em;border-bottom:1px solid currentColor;padding:0 8px 3px 0}
+.paper td{padding:2px 8px 2px 0;vertical-align:top}
+.paper td.n{text-align:right}
+.paper .foot{font-size:calc(10.7px * var(--s));margin-top:calc(1.1em * var(--s))}
+.paper .slide-title{font-size:calc(28px * var(--s));font-weight:700;line-height:1.15;text-align:left;margin-bottom:calc(.5em * var(--s))}
+.paper .slide ul{font-size:calc(17px * var(--s));text-align:left;hyphens:manual}
+.paper .slide li+li{margin-top:.3em}
+
+.duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:820px){.duo{grid-template-columns:minmax(0,1fr)}}
+.side{position:relative;min-width:0}
+.sidehead{display:flex;align-items:baseline;gap:8px;margin:0 2px 7px;font-size:13px;color:var(--dim)}
+.tag{font-weight:600;color:var(--ink);font-size:14px;border:1px solid var(--rule);border-radius:4px;padding:0 7px}
+.pick{width:100%;margin-top:10px;padding:10px;cursor:pointer;background:var(--panel);border:1px solid var(--rule);border-radius:6px}
+.pick:hover{border-color:var(--accent);color:var(--accent)}
+.pick kbd,.dock kbd{font:inherit;font-size:12px;color:var(--dim);border:1px solid var(--rule);border-radius:3px;padding:0 5px;margin-left:6px}
+.prompt{margin:0 0 4px;font-size:19px;letter-spacing:-.01em;text-wrap:balance}
+.sub{margin:0 0 20px;color:var(--dim);font-size:14px;max-width:62ch}
+.round{margin:0 0 6px;color:var(--accent);font-size:13px;font-weight:600;letter-spacing:.02em;text-transform:uppercase}
+.notice{background:var(--panel);border:1px solid var(--warm);border-radius:8px;padding:12px 16px;margin:0 0 18px;font-size:14px;max-width:70ch}
+
+/* ---------- fixed verdict bar ---------- */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--panel);border-top:1px solid var(--rule);
+  padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+.dockin{max-width:1180px;margin:0 auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.dock .count{color:var(--dim);font-size:13px;margin-right:auto}
+.dock button{background:var(--bg);border:1px solid var(--rule);border-radius:6px;padding:8px 14px;cursor:pointer}
+.dock button:hover{border-color:var(--accent)}
+.dock button.go{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* ---------- controls ---------- */
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+select,.mini{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:6px 10px;cursor:pointer;color:inherit;font:inherit}
+label.sw{display:inline-flex;gap:6px;align-items:center;color:var(--dim);font-size:13px;cursor:pointer}
+
+/* ---------- results ---------- */
+table.res{border-collapse:collapse;width:100%;font-size:14px}
+.res th,.res td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+.res th{color:var(--dim);font-weight:500;font-size:13px}
+.res td.num,.res th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.rankbar{display:block;height:4px;background:var(--accent);border-radius:2px;margin-top:5px}
+.note{color:var(--dim);font-size:13.5px;max-width:70ch}
+.brief{background:var(--panel);border:1px solid var(--rule);border-radius:8px;padding:16px 18px;margin-top:22px}
+.brief h3{margin:0 0 10px;font-size:15px}
+.brief li{margin-bottom:7px;font-size:14px}
+.brief .lean{font-weight:600;color:var(--warm)}
+.brief .flat{color:var(--dim)}
+.empty{color:var(--dim);padding:30px 0;max-width:60ch}
+.loading{padding:60px 0;color:var(--dim)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header>
+  <div class="bar">
+    <div class="mark">Taste round <span id="cohort">— loading fonts</span></div>
+    <label class="sw">Size
+      <select id="zoom" title="100 % draws every specimen at its typeset size, 10.5 pt body text">
+        <option value="1">100 % (as typeset)</option>
+        <option value="1.25">125 %</option>
+        <option value="1.5">150 %</option>
+        <option value="2">200 %</option>
+      </select>
+    </label>
+    <nav>
+      <button id="nav-compare" aria-current="true">Compare</button>
+      <button id="nav-browse">Browse</button>
+      <button id="nav-results">Results</button>
+    </nav>
+  </div>
+  <div class="meter"><i id="meter"></i></div>
+</header>
+
+<main>
+  <section id="v-compare" class="view on">
+    <div id="cmp-body" class="loading">Loading the web fonts and checking which installed fonts this machine has…</div>
+  </section>
+
+  <section id="v-browse" class="view">
+    <h2 class="prompt">Browse any specimen</h2>
+    <p class="sub">Rendered by this browser from the fonts on this machine and from Google Fonts, each scaled
+      to the same x-height. Names are shown here, so browse after the rounds.</p>
+    <div class="row">
+      <select id="b-font"></select>
+      <select id="b-spec"></select>
+      <select id="b-font2"></select>
+      <label class="sw"><input type="checkbox" id="b-invert"> Simulate dark screen</label>
+    </div>
+    <div class="duo" id="browse-duo"></div>
+    <h3 style="margin-top:34px;font-size:15px">The field, with measured properties</h3>
+    <p class="note">x-height and cap height are fractions of the em. Width is the average lowercase advance as a
+      fraction of the em. Weight is the share of the line that is ink. Figures says whether the digits sit
+      at x-height (old-style) or cap height (lining) by default.</p>
+    <div style="overflow-x:auto"><table class="res" id="meta"></table></div>
+  </section>
+
+  <section id="v-results" class="view">
+    <div id="res-body"></div>
+  </section>
+</main>
+
+<div class="dock" id="dock"><div class="dockin" id="dockin"></div></div>
+
+<script>
+"use strict";
+
+/* ============================ the field ============================
+   local: installed on this machine (Windows 11 ships all of these).
+   google: served by Google Fonts. Either kind is dropped from the field if it
+   cannot be loaded, so nothing is ever judged in a fallback face.
+   cls: old-style serif, transitional serif, slab serif, humanist sans, grotesque sans.
+   contrast: 1 low, 2 medium, 3 high (stroke thick-to-thin), set by eye.
+   maths: the matched text + maths family in the maths bench, where one exists. */
+const FIELD = [
+  {key:"georgia",     label:"Georgia",             css:'"Georgia"',             src:"local",  cls:"transitional serif", contrast:2, maths:null,                    note:"Matthew Carter's screen serif, 1993"},
+  {key:"cambria",     label:"Cambria",             css:'"Cambria"',             src:"local",  cls:"transitional serif", contrast:2, maths:"Cambria Math (not in the bench yet)", note:"Designed for ClearType, with its own maths font"},
+  {key:"constantia",  label:"Constantia",          css:'"Constantia"',          src:"local",  cls:"transitional serif", contrast:2, maths:null,                    note:"ClearType serif with old-style figures"},
+  {key:"palatino",    label:"Palatino Linotype",   css:'"Palatino Linotype"',   src:"local",  cls:"old-style serif",    contrast:2, maths:"TeX Gyre Pagella",      note:"Zapf's calligraphic humanist"},
+  {key:"bookman",     label:"Bookman Old Style",   css:'"Bookman Old Style"',   src:"local",  cls:"transitional serif", contrast:1, maths:"TeX Gyre Bonum",        note:"Wide, sturdy, high x-height"},
+  {key:"garamond",    label:"Garamond (Monotype)", css:'"Garamond"',            src:"local",  cls:"old-style serif",    contrast:2, maths:"EB Garamond + Garamond-Math", note:"Monotype's 1922 Garamond, light and small on the body"},
+  {key:"century",     label:"Century",             css:'"Century"',             src:"local",  cls:"transitional serif", contrast:2, maths:"TeX Gyre Schola",       note:"Century Expanded, the schoolbook family's parent"},
+  {key:"sitka",       label:"Sitka Text",          css:'"Sitka Text"',          src:"local",  cls:"old-style serif",    contrast:2, maths:null,                    note:"Matthew Carter, drawn from legibility research, 2013"},
+  {key:"times",       label:"Times New Roman",     css:'"Times New Roman"',     src:"local",  cls:"transitional serif", contrast:3, maths:"TeX Gyre Termes, STIX Two", note:"The journal default"},
+  {key:"literata",    label:"Literata",            css:'"Literata"',            src:"google", cls:"old-style serif",    contrast:2, maths:null,                    note:"TypeTogether for Google Play Books, 2015"},
+  {key:"sourceserif", label:"Source Serif 4",      css:'"Source Serif 4"',      src:"google", cls:"transitional serif", contrast:2, maths:null,                    note:"Frank Grießhammer, Fournier-flavoured"},
+  {key:"merriweather",label:"Merriweather",        css:'"Merriweather"',        src:"google", cls:"slab serif",         contrast:1, maths:null,                    note:"Drawn for screens, large x-height, sturdy serifs"},
+  {key:"spectral",    label:"Spectral",            css:'"Spectral"',            src:"google", cls:"transitional serif", contrast:2, maths:null,                    note:"Production Type for Google Docs, 2017"},
+  {key:"crimson",     label:"Crimson Pro",         css:'"Crimson Pro"',         src:"google", cls:"old-style serif",    contrast:2, maths:null,                    note:"Garamond-descended book face"},
+  {key:"alegreya",    label:"Alegreya",            css:'"Alegreya"',            src:"google", cls:"old-style serif",    contrast:2, maths:null,                    note:"Calligraphic, lively rhythm"},
+  {key:"vollkorn",    label:"Vollkorn",            css:'"Vollkorn"',            src:"google", cls:"old-style serif",    contrast:2, maths:null,                    note:"Dark, sturdy German book face"},
+  {key:"newsreader",  label:"Newsreader",          css:'"Newsreader"',          src:"google", cls:"transitional serif", contrast:3, maths:null,                    note:"Production Type, editorial, high contrast"},
+  {key:"ebgaramond",  label:"EB Garamond",         css:'"EB Garamond"',         src:"google", cls:"old-style serif",    contrast:2, maths:"EB Garamond + Garamond-Math", note:"Georg Duffner's Garamond revival"},
+  {key:"baskerville", label:"Libre Baskerville",   css:'"Libre Baskerville"',   src:"google", cls:"transitional serif", contrast:3, maths:null,                    note:"Baskerville widened for screen"},
+  {key:"cormorant",   label:"Cormorant Garamond",  css:'"Cormorant Garamond"',  src:"google", cls:"old-style serif",    contrast:3, maths:null,                    note:"Display Garamond with tiny x-height"},
+  {key:"ptserif",     label:"PT Serif",            css:'"PT Serif"',            src:"google", cls:"transitional serif", contrast:2, maths:null,                    note:"ParaType, Russian public face, 2010"},
+  {key:"plexserif",   label:"IBM Plex Serif",      css:'"IBM Plex Serif"',      src:"google", cls:"slab serif",         contrast:1, maths:"IBM Plex Math (not in the bench yet)", note:"Corporate slab with a maths companion"},
+  {key:"calibri",     label:"Calibri",             css:'"Calibri"',             src:"local",  cls:"humanist sans",      contrast:1, maths:null,                    note:"Office default 2007 to 2023"},
+  {key:"candara",     label:"Candara",             css:'"Candara"',             src:"local",  cls:"humanist sans",      contrast:1, maths:null,                    note:"ClearType sans with flared strokes"},
+  {key:"corbel",      label:"Corbel",              css:'"Corbel"',              src:"local",  cls:"humanist sans",      contrast:1, maths:null,                    note:"ClearType sans with old-style figures"},
+  {key:"bahnschrift", label:"Bahnschrift",         css:'"Bahnschrift"',         src:"local",  cls:"grotesque sans",     contrast:1, maths:null,                    note:"DIN 1451 for Windows"},
+  {key:"inter",       label:"Inter",               css:'"Inter"',               src:"local",  cls:"grotesque sans",     contrast:1, maths:null,                    note:"The screen UI default of the 2020s"},
+  {key:"firasans",    label:"Fira Sans",           css:'"Fira Sans"',           src:"google", cls:"humanist sans",      contrast:1, maths:"Fira Sans + Fira Math",  note:"Mozilla's UI face"},
+  {key:"sourcesans",  label:"Source Sans 3",       css:'"Source Sans 3"',       src:"google", cls:"humanist sans",      contrast:1, maths:null,                    note:"Adobe's open UI sans"},
+  {key:"worksans",    label:"Work Sans",           css:'"Work Sans"',           src:"google", cls:"grotesque sans",     contrast:1, maths:null,                    note:"Early grotesque revived for screen"},
+  {key:"plexsans",    label:"IBM Plex Sans",       css:'"IBM Plex Sans"',       src:"google", cls:"grotesque sans",     contrast:1, maths:"IBM Plex Math (not in the bench yet)", note:"Corporate grotesque with a maths companion"},
+  {key:"atkinson",    label:"Atkinson Hyperlegible", css:'"Atkinson Hyperlegible"', src:"google", cls:"humanist sans",  contrast:1, maths:null,                    note:"Braille Institute, drawn for low vision"}
+];
+
+const SPECS = [
+  ["paper",   "Body text of a paper",   "Read it as you would read a paper. Prefer the block whose grey is more even, with no dark clots or pale gaps, whose words hold together, and whose italics sit in the line without jumping out. Ignore whether you recognise the face."],
+  ["heading", "Heading and list",       "Judge the hierarchy at a glance. Prefer the side where the bold title leads, the small eyebrow stays quiet, the paragraph reads as text and the list numbers line up, all clearly one design."],
+  ["small",   "Screen and small sizes", "Judge legibility, not beauty. Prefer the side where 1, l and I, 0 and O, rn and m are told apart, where the figures line up in the table, and where the 8 pt footnote is still comfortable to read."],
+  ["slide",   "A slide",                "Judge presence from the back of a room. Prefer the side whose title carries at a distance and whose bullets hold as lines rather than falling apart."]
+];
+const ROUNDS = ["paper", "heading", "small", "slide"];
+const WIN = 1, TIE = 0.5, BYE = 0.5;
+const TARGET_XH = 0.462;                 // x-height held constant across the field, as in the maths bench
+const ZOOMS = [1, 1.25, 1.5, 2];
+const STORE = "taste.v1", ZOOM_STORE = "taste.zoom";
+
+/* ============================ state ============================ */
+let FONTS = [];                          // the families that actually loaded, in FIELD order
+let METRICS = {};                        // key -> {xh, cap, width, weight, figures, scale}
+let MISSING = [];
+const BLANK = () => ({version:1, field:null, rounds:[], done:[]});
+let S = BLANK(), zoom = 1, invert = false, view = "compare";
+const byKey = k => FONTS.find(f => f.key === k) || FIELD.find(f => f.key === k);
+
+function save(){ try{ localStorage.setItem(STORE, JSON.stringify(S)); }catch(e){} }
+function load(){
+  try{
+    const p = JSON.parse(localStorage.getItem(STORE) || "null");
+    if(p && p.version === 1 && Array.isArray(p.rounds) && Array.isArray(p.done)) S = p;
+    const z = Number(localStorage.getItem(ZOOM_STORE));
+    if(ZOOMS.includes(z)) zoom = z;
+  }catch(e){}
+}
+
+/* ============================ fonts ============================ */
+const canvas = document.createElement("canvas"), ctx = canvas.getContext("2d");
+const PROBE = "mmmmmmmmmmlliiWWW";
+
+/* A family is present if text set in it measures differently from text set in the
+   generic fallbacks. A missing family falls back and measures the same. */
+function present(css){
+  const w = fam => { ctx.font = `72px ${fam}`; return ctx.measureText(PROBE).width; };
+  return w(css + ", monospace") !== w("monospace") || w(css + ", serif") !== w("serif");
+}
+async function loadAll(){
+  const jobs = FIELD.filter(f => f.src === "google").map(f =>
+    Promise.all([
+      document.fonts.load(`400 16px ${f.css}`), document.fonts.load(`700 16px ${f.css}`),
+      document.fonts.load(`italic 400 16px ${f.css}`)
+    ]).then(faces => faces[0].length > 0).catch(() => false));
+  const ok = await Promise.all(jobs);
+  const googleOk = {};
+  FIELD.filter(f => f.src === "google").forEach((f, i) => googleOk[f.key] = ok[i]);
+  FONTS = FIELD.filter(f => (f.src === "local" || googleOk[f.key]) && present(f.css));
+  MISSING = FIELD.filter(f => !FONTS.includes(f));
+  FONTS.forEach(f => METRICS[f.key] = measure(f.css));
+}
+function measure(css){
+  const size = 100;
+  ctx.font = `${size}px ${css}`;
+  const asc = ch => ctx.measureText(ch).actualBoundingBoxAscent / size;
+  const xh = asc("x"), cap = asc("H"), three = asc("3");
+  const lower = "abcdefghijklmnopqrstuvwxyz";
+  const width = ctx.measureText(lower).width / (lower.length * size);
+  canvas.width = Math.ceil(ctx.measureText(lower).width) + 4; canvas.height = size * 1.4;
+  ctx.font = `${size}px ${css}`;
+  ctx.fillStyle = "#000"; ctx.textBaseline = "alphabetic";
+  ctx.fillText(lower, 2, size * 1.05);
+  const px = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+  let ink = 0;
+  for(let i = 3; i < px.length; i += 4) if(px[i] > 127) ink++;
+  const weight = ink / (ctx.measureText(lower).width * size * xh);   // ink per unit of x-height band
+  return {xh, cap, width, weight, figures: three < (xh + cap) / 2 ? "old-style" : "lining",
+          scale: Math.min(1.35, Math.max(0.75, TARGET_XH / xh))};
+}
+
+/* ============================ specimens ============================ */
+const TEXT = {
+  paper: '<p class="h">3.2&nbsp;&nbsp;Convergence of the truncated operator</p>' +
+    '<p class="body">Let the operator <i>T</i> be bounded on a separable Hilbert space and write <i>T</i><sub><i>n</i></sub> for its ' +
+    'rank-<i>n</i> truncation. We first show that the truncations converge in norm whenever the spectral measure is absolutely ' +
+    'continuous; the singular case is deferred to Section 4. The argument is elementary but the bookkeeping is delicate, because ' +
+    'the error term is not uniform in the spectral parameter. Throughout, <i>c</i> and <i>C</i> denote absolute constants whose value ' +
+    'may change from line to line. Weak convergence is immediate from the definition, so the content of the theorem is that the ' +
+    'convergence is in fact uniform on bounded sets, a fact first observed by Halmos in 1967 and sharpened in 1987.</p>',
+  heading: '<p class="eyebrow">Chapter 3</p><p class="title">Spectral gaps and mixing times</p>' +
+    '<p class="body">A reversible chain with a spectral gap of <i>δ</i> mixes in time of order 1/<i>δ</i> times a logarithm of the ' +
+    'size of the state space. This chapter makes that statement precise and shows that the logarithm cannot be removed in general.</p>' +
+    '<ol><li>The gap controls the distance to equilibrium in total variation.</li>' +
+    '<li>The logarithm is sharp: the hypercube attains it.</li>' +
+    '<li>Comparison arguments transfer the bound between chains.</li></ol>',
+  small: '<table><tr><th>parameter</th><th class="n">value</th><th class="n">s.e.</th><th>status</th></tr>' +
+    '<tr><td>step size</td><td class="n">0.015625</td><td class="n">0.000031</td><td>converged</td></tr>' +
+    '<tr><td>tolerance</td><td class="n">1.0e-09</td><td class="n">—</td><td>fixed</td></tr>' +
+    '<tr><td>iterations</td><td class="n">18,402</td><td class="n">—</td><td>93.7 % of budget</td></tr>' +
+    '<tr><td>residual</td><td class="n">4.81e-07</td><td class="n">2.2e-09</td><td>OK</td></tr>' +
+    '<tr><td>wall clock</td><td class="n">00:41:38</td><td class="n">—</td><td>2026-09-19</td></tr></table>' +
+    '<p class="foot">Footnote size: the Illinois illustration (Il1 O0 rn m) tests ambiguous pairs at 8 pt, where screen rendering is least forgiving.</p>',
+  slide: '<div class="slide"><p class="slide-title">Why the gap closes</p><ul>' +
+    '<li>Truncation error decays like the square root of <i>n</i>, up to a logarithm</li>' +
+    '<li>Uniform on bounded sets, not just weakly</li>' +
+    '<li>Fails when the measure has a singular part</li></ul></div>'
+};
+function put(el, key, spec, inverted){
+  const f = byKey(key), m = METRICS[key];
+  const paper = document.createElement("div");
+  paper.className = "paper" + (inverted ? " inverted" : "");
+  paper.lang = "en";
+  paper.style.fontFamily = f.css;
+  paper.style.setProperty("--s", m ? m.scale.toFixed(4) : "1");
+  paper.innerHTML = TEXT[spec];
+  el.replaceChildren(paper);
+}
+
+/* ============================ standings ============================ */
+function points(k){
+  let p = 0;
+  for(const d of S.done){ if(d.a === k) p += d.o; else if(d.b === k) p += 1 - d.o; }
+  for(const r of S.rounds) if(r.bye === k) p += BYE;
+  return p;
+}
+function opponents(k){ return S.done.filter(d => d.a === k || d.b === k).map(d => d.a === k ? d.b : d.a); }
+function buchholz(k){ return opponents(k).reduce((s, o) => s + points(o), 0); }
+function record(k){
+  const r = {w:0, t:0, l:0};
+  for(const d of S.done){
+    if(d.a !== k && d.b !== k) continue;
+    const mine = d.a === k ? d.o : 1 - d.o;
+    if(mine === WIN) r.w++; else if(mine === TIE) r.t++; else r.l++;
+  }
+  return r;
+}
+function met(a, b){ return S.rounds.some(r => r.pairs.some(p => (p[0] === a && p[1] === b) || (p[0] === b && p[1] === a))); }
+function ranked(){
+  return S.field.slice().sort((a, b) => points(b) - points(a) || buchholz(b) - buchholz(a) || a.localeCompare(b));
+}
+function pairsPerRound(){ return Math.floor(S.field.length / 2); }
+function total(){ return ROUNDS.length * pairsPerRound(); }
+function roundsDone(){ return S.rounds.filter((r, i) => S.done.filter(d => d.round === i).length >= r.pairs.length).length; }
+
+/* ============================ pairing ============================ */
+function current(){
+  const i = S.rounds.length - 1, r = S.rounds[i];
+  if(!r) return null;
+  const n = S.done.filter(d => d.round === i).length;
+  if(n >= r.pairs.length) return null;
+  return {a:r.pairs[n][0], b:r.pairs[n][1], spec:r.spec, round:i, index:n, of:r.pairs.length};
+}
+function advance(){
+  if(S.rounds.length >= ROUNDS.length || (S.rounds.length && current())) return;
+  const shuffle = S.field.map(k => ({k, p:points(k), b:buchholz(k), t:Math.random()}));
+  let order = shuffle.sort((x, y) => y.p - x.p || y.b - x.b || x.t - y.t).map(x => x.k);
+  let bye = null;
+  if(order.length % 2){
+    const had = new Set(S.rounds.map(r => r.bye));
+    bye = order.slice().reverse().find(k => !had.has(k)) || order[order.length - 1];
+    order = order.filter(k => k !== bye);
+  }
+  const pairs = (pairUp(order) || chunk(order)).map(p => Math.random() < 0.5 ? [p[1], p[0]] : p);
+  S.rounds.push({spec:ROUNDS[S.rounds.length], pairs, bye});
+  save();
+}
+function pairUp(order){
+  if(!order.length) return [];
+  const [first, ...rest] = order;
+  for(let i = 0; i < rest.length; i++){
+    if(met(first, rest[i])) continue;
+    const tail = pairUp(rest.filter((_, j) => j !== i));
+    if(tail) return [[first, rest[i]], ...tail];
+  }
+  return null;
+}
+function chunk(order){ const out = []; for(let i = 0; i + 1 < order.length; i += 2) out.push([order[i], order[i + 1]]); return out; }
+function verdict(outcome){
+  const p = current();
+  if(!p) return;
+  S.done.push({a:p.a, b:p.b, spec:p.spec, round:p.round, o:outcome});
+  save(); advance(); paint();
+}
+
+/* ============================ boot ============================ */
+async function boot(){
+  load();
+  await loadAll();
+  document.getElementById("cohort").textContent = "— " + FONTS.length + " families";
+  const zs = document.getElementById("zoom");
+  zs.value = String(zoom);
+  document.documentElement.style.setProperty("--zoom", zoom);
+  zs.onchange = () => {
+    zoom = Number(zs.value);
+    document.documentElement.style.setProperty("--zoom", zoom);
+    try{ localStorage.setItem(ZOOM_STORE, String(zoom)); }catch(e){}
+  };
+  if(!S.field) S.field = FONTS.map(f => f.key);
+  buildBrowse(); advance(); paint();
+}
+
+/* ============================ rendering ============================ */
+function stale(){ return S.field.filter(k => !FONTS.some(f => f.key === k)); }
+function paint(){
+  document.getElementById("meter").style.width = Math.min(100, 100 * S.done.length / total()) + "%";
+  if(view === "compare") paintCompare();
+  if(view === "browse")  paintBrowse();
+  if(view === "results") paintResults();
+  paintDock();
+}
+function paintCompare(){
+  const host = document.getElementById("cmp-body");
+  const gone = stale();
+  if(gone.length){
+    host.innerHTML = '<h2 class="prompt">Some families did not load this time</h2>' +
+      '<p class="empty">' + gone.map(k => byKey(k).label).join(", ") + ' loaded when this tournament started ' +
+      'but not now, so their specimens would show a fallback face. Reload to try again, or start over from the Results tab.</p>';
+    return;
+  }
+  const p = current();
+  if(!p){
+    host.innerHTML = '<h2 class="prompt">Rounds complete</h2>' +
+      '<p class="sub">' + S.done.length + ' judgements over ' + ROUNDS.length + ' rounds. The standings and your taste profile are on the Results tab.</p>';
+    return;
+  }
+  const sp = SPECS.find(s => s[0] === p.spec);
+  host.innerHTML =
+    (MISSING.length && S.done.length === 0 ? '<div class="notice">' + MISSING.length + ' of ' + FIELD.length +
+      ' families could not be loaded and are left out: ' + MISSING.map(f => f.label).join(", ") + '.</div>' : "") +
+    '<p class="round">Round ' + (p.round + 1) + ' of ' + ROUNDS.length + ' · pair ' + (p.index + 1) + ' of ' + p.of + '</p>' +
+    '<h2 class="prompt">' + sp[1] + '</h2><p class="sub">' + sp[2] + '</p>' +
+    '<div class="duo">' + side("A", "left") + side("B", "right") + '</div>';
+  put(host.querySelector("#pa"), p.a, p.spec, invert);
+  put(host.querySelector("#pb"), p.b, p.spec, invert);
+  host.querySelector("#ba").onclick = () => verdict(1);
+  host.querySelector("#bb").onclick = () => verdict(0);
+}
+function side(letter, which){
+  const id = which === "left" ? "pa" : "pb", b = which === "left" ? "ba" : "bb";
+  return '<div class="side"><div class="sidehead"><span class="tag">' + letter + '</span></div>' +
+    '<div class="paperwrap" id="' + id + '"></div>' +
+    '<button class="pick" id="' + b + '">Prefer ' + letter + '<kbd>' + (which === "left" ? "←" : "→") + '</kbd></button></div>';
+}
+function paintDock(){
+  const d = document.getElementById("dockin"), p = current();
+  if(view === "compare"){
+    d.innerHTML = p && !stale().length
+      ? '<span class="count">Judgement ' + (S.done.length + 1) + ' of ' + total() + '</span>' +
+        '<label class="sw"><input type="checkbox" id="d-inv"' + (invert ? " checked" : "") + '> Dark screen</label>' +
+        '<button id="d-tie">No preference <kbd>space</kbd></button>'
+      : '<span class="count">' + S.done.length + ' judgements recorded</span>' +
+        '<button class="go" id="d-res">See results</button>';
+    const t = d.querySelector("#d-tie"); if(t) t.onclick = () => verdict(0.5);
+    const i = d.querySelector("#d-inv"); if(i) i.onchange = e => { invert = e.target.checked; paint(); };
+    const v = d.querySelector("#d-res"); if(v) v.onclick = () => go("results");
+  }else{
+    d.innerHTML = '<span class="count">' + S.done.length + ' judgements recorded</span>' +
+      '<button id="d-back">Back to comparing</button><button id="d-reset">Start over</button>';
+    d.querySelector("#d-back").onclick = () => go("compare");
+    d.querySelector("#d-reset").onclick = () => {
+      if(confirm("Discard all judgements and start over?")){
+        S = BLANK(); S.field = FONTS.map(f => f.key); save(); advance(); go("compare");
+      }
+    };
+  }
+}
+
+/* ---------- results and the taste profile ---------- */
+const half = n => (Number.isInteger(n) ? String(n) : Math.floor(n) + "½").replace(/^0½$/, "½");
+function ranks(values){                   // average ranks, for Spearman
+  const idx = values.map((v, i) => [v, i]).sort((a, b) => a[0] - b[0]);
+  const out = new Array(values.length);
+  for(let i = 0; i < idx.length;){
+    let j = i; while(j + 1 < idx.length && idx[j + 1][0] === idx[i][0]) j++;
+    const r = (i + j) / 2 + 1;
+    for(let k = i; k <= j; k++) out[idx[k][1]] = r;
+    i = j + 1;
+  }
+  return out;
+}
+function spearman(xs, ys){
+  const rx = ranks(xs), ry = ranks(ys), n = xs.length;
+  const mx = rx.reduce((a, b) => a + b, 0) / n, my = ry.reduce((a, b) => a + b, 0) / n;
+  let num = 0, dx = 0, dy = 0;
+  for(let i = 0; i < n; i++){ num += (rx[i] - mx) * (ry[i] - my); dx += (rx[i] - mx) ** 2; dy += (ry[i] - my) ** 2; }
+  return dx && dy ? num / Math.sqrt(dx * dy) : 0;
+}
+const PROPS = [
+  ["xh",       "x-height",        "larger x-heights",         "smaller x-heights",     k => METRICS[k].xh],
+  ["width",    "width",           "wider letters",            "narrower letters",      k => METRICS[k].width],
+  ["weight",   "weight",          "darker, heavier faces",    "lighter faces",         k => METRICS[k].weight],
+  ["contrast", "stroke contrast", "higher contrast (thin hairlines)", "lower, more even strokes", k => byKey(k).contrast]
+];
+function lean(rho){
+  const a = Math.abs(rho);
+  return a >= 0.3 ? "clear" : a >= 0.15 ? "slight" : "none";
+}
+function groupMeans(keys, fn){
+  const g = {};
+  keys.forEach(k => { const c = fn(k); (g[c] = g[c] || []).push(points(k)); });
+  return Object.entries(g).map(([c, v]) => [c, v.reduce((a, b) => a + b, 0) / v.length, v.length])
+    .sort((a, b) => b[1] - a[1]);
+}
+function profileLines(){
+  const keys = S.field, pts = keys.map(points), lines = [];
+  PROPS.forEach(([id, name, up, down, fn]) => {
+    const rho = spearman(keys.map(fn), pts), l = lean(rho);
+    lines.push({name, rho, lean:l, text: l === "none" ? "no lean on " + name :
+      (l === "clear" ? "a clear lean toward " : "a slight lean toward ") + (rho > 0 ? up : down)});
+  });
+  return lines;
+}
+function paintResults(){
+  const host = document.getElementById("res-body");
+  if(!S.done.length){
+    host.innerHTML = '<h2 class="prompt">Nothing judged yet</h2><p class="empty">Make some comparisons and the standings will build here.</p>';
+    return;
+  }
+  const r = ranked(), top = points(r[0]), bot = points(r[r.length - 1]), span = Math.max(1, top - bot);
+  let html = '<h2 class="prompt">Standings</h2>' +
+    '<p class="sub">Swiss standings after ' + roundsDone() + ' of ' + ROUNDS.length + ' rounds and ' + S.done.length +
+    ' blind judgements. One point for a win, half for no preference or for sitting out a round. Buchholz is the sum of each ' +
+    'opponent\'s points, the usual tiebreak.</p>' +
+    '<div style="overflow-x:auto"><table class="res"><tr><th>Family</th><th>Class</th><th class="num">Points</th>' +
+    '<th class="num">Buchholz</th><th class="num">W / T / L</th><th>Maths sibling</th></tr>' +
+    r.map((k, i) => {
+      const f = byKey(k), rec = record(k);
+      return '<tr><td><strong>' + (i + 1) + '. ' + f.label + '</strong>' +
+        '<span class="rankbar" style="width:' + Math.max(3, 100 * (points(k) - bot) / span) + '%"></span></td>' +
+        '<td class="note">' + f.cls + '</td><td class="num">' + half(points(k)) + '</td>' +
+        '<td class="num">' + half(buchholz(k)) + '</td><td class="num">' + rec.w + ' / ' + rec.t + ' / ' + rec.l + '</td>' +
+        '<td class="note">' + (f.maths || "") + '</td></tr>';
+    }).join("") + '</table></div>';
+
+  if(roundsDone() >= 2){
+    const lines = profileLines();
+    const cls = groupMeans(S.field, k => byKey(k).cls);
+    const fig = groupMeans(S.field, k => METRICS[k].figures + " figures");
+    const serifSans = groupMeans(S.field, k => /sans/.test(byKey(k).cls) ? "sans" : "serif");
+    html += '<div class="brief"><h3>Taste profile</h3>' +
+      '<p class="note">Spearman rank correlation between each family\'s points and its measured property, across the whole field. ' +
+      'Above 0.3 in size is a clear lean, above 0.15 a slight one. These are properties of what you chose, not of any single font, ' +
+      'which is what a brief for a typeface of your own needs.</p><ul>' +
+      lines.map(l => '<li><span class="' + (l.lean === "none" ? "flat" : "lean") + '">' + l.text + '</span>' +
+        ' <span class="note">(ρ = ' + (l.rho >= 0 ? "+" : "") + l.rho.toFixed(2) + ')</span></li>').join("") +
+      '</ul><h3 style="margin-top:16px">Mean points by kind</h3><ul>' +
+      '<li>' + serifSans.map(([c, m, n]) => c + " " + m.toFixed(2) + " (" + n + ")").join(" · ") + '</li>' +
+      '<li>' + cls.map(([c, m, n]) => c + " " + m.toFixed(2) + " (" + n + ")").join(" · ") + '</li>' +
+      '<li>' + fig.map(([c, m, n]) => c + " " + m.toFixed(2) + " (" + n + ")").join(" · ") + '</li></ul>' +
+      '<h3 style="margin-top:16px">Maths siblings in your top eight</h3><p class="note">' +
+      (r.slice(0, 8).filter(k => byKey(k).maths).map(k => byKey(k).label + " → " + byKey(k).maths).join("; ") ||
+       "none of your top eight has a matched maths font") + '</p></div>';
+  }else{
+    html += '<p class="note" style="margin-top:18px">The taste profile appears once two rounds are complete.</p>';
+  }
+  html += '<div class="row" style="margin-top:20px"><button class="mini" id="copy">Copy results as text</button></div>';
+  host.innerHTML = html;
+  document.getElementById("copy").onclick = async () => {
+    const lines = ["Taste round: " + S.done.length + " blind judgements, " + roundsDone() + " of " + ROUNDS.length + " Swiss rounds, " +
+                   S.field.length + " families", ""];
+    ranked().forEach((k, i) => {
+      const f = byKey(k), rec = record(k), m = METRICS[k];
+      lines.push((i + 1) + ". " + f.label + "  " + half(points(k)) + " pts, Buchholz " + half(buchholz(k)) + ", " +
+        rec.w + "/" + rec.t + "/" + rec.l + "  [" + f.cls + ", xh " + m.xh.toFixed(3) + ", width " + m.width.toFixed(3) +
+        ", weight " + m.weight.toFixed(3) + ", contrast " + f.contrast + ", " + m.figures + " figures]");
+    });
+    if(roundsDone() >= 2){
+      lines.push("", "Profile:");
+      profileLines().forEach(l => lines.push("  " + l.text + " (rho " + l.rho.toFixed(2) + ")"));
+    }
+    if(MISSING.length) lines.push("", "Not loaded: " + MISSING.map(f => f.label).join(", "));
+    try{ await navigator.clipboard.writeText(lines.join("\n")); document.getElementById("copy").textContent = "Copied"; }catch(e){}
+  };
+}
+
+/* ---------- browse ---------- */
+function buildBrowse(){
+  const f1 = document.getElementById("b-font"), f2 = document.getElementById("b-font2"), sp = document.getElementById("b-spec");
+  FONTS.forEach(f => { f1.add(new Option(f.label, f.key)); f2.add(new Option(f.label, f.key)); });
+  f2.insertBefore(new Option("— nothing alongside —", ""), f2.firstChild);
+  f2.value = "";
+  SPECS.forEach(s => sp.add(new Option(s[1], s[0])));
+  [f1, f2, sp].forEach(el => el.onchange = paintBrowse);
+  document.getElementById("b-invert").onchange = e => { invert = e.target.checked; paintBrowse(); };
+  document.getElementById("meta").innerHTML =
+    '<tr><th>Family</th><th>Source</th><th>Class</th><th class="num">x-height</th><th class="num">Cap height</th>' +
+    '<th class="num">Width</th><th class="num">Weight</th><th>Figures</th><th class="num">Contrast</th><th>Note</th></tr>' +
+    FONTS.map(f => { const m = METRICS[f.key]; return '<tr><td><strong>' + f.label + '</strong></td><td class="note">' +
+      (f.src === "local" ? "this machine" : "Google Fonts") + '</td><td class="note">' + f.cls + '</td>' +
+      '<td class="num">' + m.xh.toFixed(3) + '</td><td class="num">' + m.cap.toFixed(3) + '</td><td class="num">' + m.width.toFixed(3) +
+      '</td><td class="num">' + m.weight.toFixed(3) + '</td><td class="note">' + m.figures + '</td><td class="num">' + f.contrast +
+      '</td><td class="note">' + f.note + '</td></tr>'; }).join("") +
+    (MISSING.length ? '<tr><td colspan="10" class="note">Not loaded, left out of the field: ' + MISSING.map(f => f.label).join(", ") + '</td></tr>' : "");
+}
+function paintBrowse(){
+  const a = document.getElementById("b-font").value, b = document.getElementById("b-font2").value,
+        s = document.getElementById("b-spec").value, host = document.getElementById("browse-duo");
+  if(!a) return;
+  host.innerHTML = '<div class="side"><div class="sidehead"><span class="tag">' + byKey(a).label + '</span></div><div class="paperwrap" id="ba1"></div></div>' +
+    (b ? '<div class="side"><div class="sidehead"><span class="tag">' + byKey(b).label + '</span></div><div class="paperwrap" id="ba2"></div></div>' : "");
+  put(document.getElementById("ba1"), a, s, invert);
+  if(b) put(document.getElementById("ba2"), b, s, invert);
+}
+
+/* ============================ nav ============================ */
+function go(v){
+  view = v;
+  ["compare", "browse", "results"].forEach(k => {
+    document.getElementById("v-" + k).classList.toggle("on", k === v);
+    document.getElementById("nav-" + k).setAttribute("aria-current", String(k === v));
+  });
+  paint();
+  window.scrollTo(0, 0);
+}
+["compare", "browse", "results"].forEach(k => document.getElementById("nav-" + k).onclick = () => go(k));
+document.addEventListener("keydown", e => {
+  if(view !== "compare" || !current() || e.target.tagName === "SELECT") return;
+  if(e.key === "ArrowLeft"){ e.preventDefault(); verdict(1); }
+  if(e.key === "ArrowRight"){ e.preventDefault(); verdict(0); }
+  if(e.key === " "){ e.preventDefault(); verdict(0.5); }
+});
+boot().catch(err => {
+  document.getElementById("cmp-body").innerHTML = '<h2 class="prompt">The page could not start</h2><p class="empty">' + err.message + '</p>';
+});
+</script>

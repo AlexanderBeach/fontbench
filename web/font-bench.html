@@ -55,18 +55,21 @@ main{max-width:1180px;margin:0 auto;padding:22px 16px 132px}
 .view{display:none}
 .view.on{display:block}
 
-/* ---------- specimen paper ---------- */
+/* ---------- specimen paper ----------
+   Each specimen is drawn at its typeset size: one PostScript point is 4/3 CSS
+   pixels, so 10.5 pt text is 14 px tall at 100 %, whatever the window width.
+   A paper narrower than its specimen scrolls sideways rather than shrinking. */
 .paper{
   background:var(--paper);border-radius:3px;padding:20px 20px 16px;
   box-shadow:0 1px 2px var(--shadow),0 8px 24px -12px var(--shadow);
   overflow-x:auto;
 }
-.paper svg{display:block;width:100%;height:auto;max-width:100%}
+.paper svg{display:block;height:auto}
 .paper.inverted{background:#16181b}
 .paper.inverted svg{filter:invert(1) hue-rotate(180deg)}
 
-.duo{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
-@media (max-width:820px){.duo{grid-template-columns:1fr}}
+.duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:820px){.duo{grid-template-columns:minmax(0,1fr)}}
 
 .side{position:relative}
 .sidehead{
@@ -89,6 +92,7 @@ main{max-width:1180px;margin:0 auto;padding:22px 16px 132px}
 
 .prompt{margin:0 0 4px;font-size:19px;letter-spacing:-.01em}
 .sub{margin:0 0 20px;color:var(--dim);font-size:14px;max-width:62ch}
+.round{margin:0 0 6px;color:var(--accent);font-size:13px;font-weight:600;letter-spacing:.02em;text-transform:uppercase}
 
 /* ---------- fixed verdict bar ---------- */
 .dock{
@@ -111,7 +115,7 @@ main{max-width:1180px;margin:0 auto;padding:22px 16px 132px}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
 select,.mini{
   background:var(--panel);border:1px solid var(--rule);border-radius:6px;
-  padding:6px 10px;cursor:pointer;
+  padding:6px 10px;cursor:pointer;color:inherit;font:inherit;
 }
 label.sw{display:inline-flex;gap:6px;align-items:center;color:var(--dim);font-size:13px;cursor:pointer}
 
@@ -132,7 +136,7 @@ label.sw{display:inline-flex;gap:6px;align-items:center;color:var(--dim);font-si
 table{border-collapse:collapse;width:100%;font-size:14px}
 th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
 th{color:var(--dim);font-weight:500;font-size:13px}
-td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .rankbar{display:block;height:4px;background:var(--accent);border-radius:2px;margin-top:5px}
 .note{color:var(--dim);font-size:13.5px;max-width:70ch}
 .brief{background:var(--panel);border:1px solid var(--rule);border-radius:8px;padding:16px 18px;margin-top:22px}
@@ -150,6 +154,14 @@ td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 <header>
   <div class="bar">
     <div class="mark">Font bench <span id="cohort">— loading</span></div>
+    <label class="sw">Size
+      <select id="zoom" title="100 % draws every specimen at its typeset size, 10.5 pt body text">
+        <option value="1">100 % (as typeset)</option>
+        <option value="1.25">125 %</option>
+        <option value="1.5">150 %</option>
+        <option value="2">200 %</option>
+      </select>
+    </label>
     <nav>
       <button id="nav-compare" aria-current="true">Compare</button>
       <button id="nav-rate">Rate details</button>
@@ -168,7 +180,7 @@ td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
   <section id="v-rate" class="view">
     <h2 class="prompt">Rate the finalists part by part</h2>
     <p class="sub">This is the data that would feed a design brief later. Score each dimension
-      1 (weak) to 5 (excellent). Names are shown here — the blind phase is over.</p>
+      1 (weak) to 5 (excellent). Names are shown here, so do this after the blind rounds.</p>
     <div id="rate-body"></div>
   </section>
 
@@ -201,40 +213,49 @@ td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 /* ============================ data ============================ */
 const FONTS = __ROSTER__;
 const SPECS = [
-  ["paper",   "Body text of a paper",  "A 10.5 pt paragraph with inline maths. The single most important test: judge the overall grey of the block, not individual letters."],
-  ["display", "Displayed equations",   "Integrals, fractions, matrices, limits. Look at the weight of fraction bars and the fit of large delimiters."],
-  ["theorem", "Theorem and proof",     "Bold, italic and small caps working together, plus a displayed line inside running prose."],
-  ["slide",   "A slide",               "Large heading, bullets and an equation at projection size. Different problem from print: it needs presence."],
-  ["ui",      "Screen and small sizes","Tabular figures at 9 pt, a footnote at 8 pt. This is where fonts drawn for paper often fall apart."],
-  ["chars",   "Character detail",      "Alphabet, figures, ambiguous pairs, Greek and operators. The forensic view."]
+  ["paper",   "Body text of a paper",  "Read it as you would read a paper. Prefer the block whose grey is more even, with no dark clots or pale gaps, whose words hold together, and whose inline maths sits in the line without jumping out in size or weight. Ignore whether you recognise the face."],
+  ["display", "Displayed equations",   "Judge the maths as maths. Prefer the side whose fraction bars, radicals and large brackets match the weight of the letters, whose subscripts and superscripts are still legible, whose v and ν, x and χ are told apart, and whose italic variables look like the same design as the text."],
+  ["theorem", "Theorem and proof",     "Judge the hierarchy at a glance. Prefer the side where the bold head, the italic statement, the small-caps PROOF and the roman proof are each clearly a different voice, and where the displayed line and the prose around it belong to one design."],
+  ["ui",      "Screen and small sizes","Judge legibility, not beauty. Prefer the side where 1, l and I, 0 and O, rn and m are told apart, where the figures line up in the table, and where the 8 pt footnote is still comfortable to read."],
+  ["slide",   "A slide",               "Judge presence from the back of a room. Prefer the side whose title carries at a distance, whose bullets hold as lines rather than falling apart, and whose equation still looks like it belongs to the text."],
+  ["chars",   "Character detail",      "Judge the alphabet as a set. Prefer the side with consistent stroke weight across letters, Greek that matches the Latin, blackboard-bold and calligraphic alphabets that are distinct from each other, and operators that sit on the same line as the letters."]
 ];
 const DIMS = [
-  ["texture",  "Paragraph colour",   "The even grey of a block of text at reading size."],
-  ["letters",  "Letterforms",        "Terminals, counters, the shapes you would want to keep."],
-  ["figures",  "Numerals",           "Do the digits sit well in prose and align in tables?"],
-  ["italic",   "Italic",             "Distinct enough from roman, without shouting."],
-  ["greek",    "Greek and variables","α, β, θ, Γ, Ω and italic maths letters."],
-  ["structs",  "Maths structures",   "Fraction bars, radicals, big operators, stretched delimiters."],
-  ["small",    "Small sizes",        "Legibility at 8–9 pt and on screen."],
-  ["presence", "Headline presence",  "How it carries a slide title at 21 pt."]
+  ["texture",  "Paragraph colour",   "The even grey of a block of text at reading size.", "Body text of a paper"],
+  ["letters",  "Letterforms",        "Terminals, counters, the shapes you would want to keep.", "Character detail"],
+  ["figures",  "Numerals",           "Do the digits sit well in prose and align in tables?", "Screen and small sizes, and the figures line in Character detail"],
+  ["italic",   "Italic",             "Distinct enough from roman, without shouting.", "Theorem and proof, and the italic line in Character detail"],
+  ["greek",    "Greek and variables","α, β, θ, Γ, Ω and italic maths letters.", "Character detail, and the variables in Displayed equations"],
+  ["structs",  "Maths structures",   "Fraction bars, radicals, big operators, stretched delimiters.", "Displayed equations"],
+  ["small",    "Small sizes",        "Legibility at 8–9 pt and on screen.", "Screen and small sizes"],
+  ["presence", "Headline presence",  "How it carries a slide title at 21 pt.", "A slide"]
 ];
-const PAIRS_TARGET = 48, FINALISTS = 6, K = 28;
+
+/* The blind phase is a Swiss tournament. Each round uses one specimen type, in
+   order of importance. Every family is judged once per round (with an odd
+   field, one family sits out), and from round two on families with equal
+   points meet each other. No pair is repeated. */
+const ROUNDS = ["paper", "display", "theorem", "ui", "slide"];
+const PAIRS_PER_ROUND = Math.floor(FONTS.length / 2);
+const TOTAL = ROUNDS.length * PAIRS_PER_ROUND;
+const WIN = 1, TIE = 0.5, BYE = 0.5;   // points for a win, no preference, sitting out
+const FINALISTS = 6;
+const PT = 96 / 72;                      // CSS pixels per PostScript point
+const ZOOMS = [1, 1.25, 1.5, 2];
+const STORE = "fontbench.v3", ZOOM_STORE = "fontbench.zoom";
 
 /* ============================ state ============================ */
-const BLANK = () => ({
-  elo:Object.fromEntries(FONTS.map(f=>[f.key,1500])),
-  seen:Object.fromEntries(FONTS.map(f=>[f.key,0])),
-  done:[], comp:{}, round:0
-});
-let S = BLANK(), SVG = null, pair = null;
+/* rounds: [{spec, pairs:[[a,b],...], bye}]  done: [{a,b,spec,round,o}]  o: 1 = A, 0 = B, 0.5 = tie */
+const BLANK = () => ({version:2, rounds:[], done:[], comp:{}});
+let S = BLANK(), SVG = null, zoom = 1, invert = false, view = "compare";
 
-function save(){ try{ localStorage.setItem("fontbench.v1", JSON.stringify(S)); }catch(e){} }
+function save(){ try{ localStorage.setItem(STORE, JSON.stringify(S)); }catch(e){} }
 function load(){
   try{
-    const r = localStorage.getItem("fontbench.v1");
-    if(!r) return;
-    const p = JSON.parse(r);
-    if(p && p.elo && Object.keys(p.elo).length === FONTS.length) S = p;
+    const p = JSON.parse(localStorage.getItem(STORE) || "null");
+    if(p && p.version === 2 && Array.isArray(p.rounds) && Array.isArray(p.done)) S = p;
+    const z = Number(localStorage.getItem(ZOOM_STORE));
+    if(ZOOMS.includes(z)) zoom = z;
   }catch(e){}
 }
 
@@ -242,17 +263,21 @@ function load(){
 async function boot(){
   const b64 = document.getElementById("bundle").textContent.trim();
   const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
-  let text;
-  if("DecompressionStream" in window){
-    const s = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
-    text = await new Response(s).text();
-  }else{
+  if(!("DecompressionStream" in window)){
     throw new Error("This browser cannot unpack the specimens (needs DecompressionStream).");
   }
-  SVG = JSON.parse(text);
+  const s = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
+  SVG = JSON.parse(await new Response(s).text());
   load();
   document.getElementById("cohort").textContent = "— " + FONTS.length + " matched text + maths families";
-  buildBrowse(); nextPair(); paint();
+  const zs = document.getElementById("zoom");
+  zs.value = String(zoom);
+  zs.onchange = () => {
+    zoom = Number(zs.value);
+    try{ localStorage.setItem(ZOOM_STORE, String(zoom)); }catch(e){}
+    paint();
+  };
+  buildBrowse(); advance(); paint();
 }
 
 /* ============================ helpers ============================ */
@@ -260,75 +285,113 @@ const byKey = k => FONTS.find(f => f.key === k);
 function put(el, key, spec, inverted){
   el.innerHTML = SVG[key + "_" + spec] || "";
   const s = el.querySelector("svg");
-  if(s){ s.removeAttribute("width"); s.removeAttribute("height"); }
+  if(s){
+    const widthPt = Number(s.getAttribute("viewBox").split(/\s+/)[2]);
+    s.removeAttribute("width"); s.removeAttribute("height");
+    s.style.width = (widthPt * PT * zoom).toFixed(2) + "px";
+  }
   el.classList.toggle("inverted", !!inverted);
 }
-function ranked(){
-  return FONTS.slice().sort((a,b) => S.elo[b.key] - S.elo[a.key]);
+
+/* ============================ standings ============================ */
+function points(k){
+  let p = 0;
+  for(const d of S.done){ if(d.a === k) p += d.o; else if(d.b === k) p += 1 - d.o; }
+  for(const r of S.rounds) if(r.bye === k) p += BYE;
+  return p;
 }
-function comparisonsFor(k){ return S.done.filter(d => d.a===k || d.b===k).length; }
+function opponents(k){ return S.done.filter(d => d.a === k || d.b === k).map(d => d.a === k ? d.b : d.a); }
+function buchholz(k){ return opponents(k).reduce((s, o) => s + points(o), 0); }   // the usual Swiss tiebreak
+function record(k){
+  const r = {w:0, t:0, l:0};
+  for(const d of S.done){
+    if(d.a !== k && d.b !== k) continue;
+    const mine = d.a === k ? d.o : 1 - d.o;
+    if(mine === WIN) r.w++; else if(mine === TIE) r.t++; else r.l++;
+  }
+  return r;
+}
+function met(a, b){
+  return S.rounds.some(r => r.pairs.some(p => (p[0] === a && p[1] === b) || (p[0] === b && p[1] === a)));
+}
+function ranked(){
+  return FONTS.map(f => f.key)
+    .sort((a, b) => points(b) - points(a) || buchholz(b) - buchholz(a) || a.localeCompare(b));
+}
+function roundsDone(){
+  return S.rounds.filter((r, i) => S.done.filter(d => d.round === i).length >= r.pairs.length).length;
+}
+function complete(){ return roundsDone() >= ROUNDS.length; }
 
 /* ============================ pairing ============================ */
-function nextPair(){
-  if(S.done.length >= PAIRS_TARGET){ pair = null; return; }
-  const spec = SPECS[S.done.length % SPECS.length][0];
-  const used = new Set(S.done.map(d => [d.a,d.b].sort().join("|")));
-  const pool = FONTS.slice().sort((a,b) =>
-      (comparisonsFor(a.key) - comparisonsFor(b.key)) || (Math.random()-0.5));
-  let best = null, bestGap = Infinity;
-  for(let i=0;i<Math.min(pool.length,9);i++){
-    for(let j=i+1;j<pool.length;j++){
-      const k = [pool[i].key,pool[j].key].sort().join("|");
-      if(used.has(k)) continue;
-      const gap = Math.abs(S.elo[pool[i].key] - S.elo[pool[j].key])
-                + 60*(comparisonsFor(pool[j].key));
-      if(gap < bestGap){ bestGap = gap; best = [pool[i].key, pool[j].key]; }
-    }
-  }
-  if(!best){ pair = null; return; }
-  if(Math.random() < 0.5) best.reverse();
-  pair = {a:best[0], b:best[1], spec};
+function current(){
+  const i = S.rounds.length - 1, r = S.rounds[i];
+  if(!r) return null;
+  const n = S.done.filter(d => d.round === i).length;
+  if(n >= r.pairs.length) return null;
+  return {a:r.pairs[n][0], b:r.pairs[n][1], spec:r.spec, round:i, index:n, of:r.pairs.length};
 }
+function advance(){                       // schedule the next round once the current one is complete
+  if(S.rounds.length >= ROUNDS.length || (S.rounds.length && current())) return;
+  const shuffle = FONTS.map(f => ({k:f.key, p:points(f.key), b:buchholz(f.key), t:Math.random()}));
+  let order = shuffle.sort((x, y) => y.p - x.p || y.b - x.b || x.t - y.t).map(x => x.k);
+  let bye = null;
+  if(order.length % 2){                   // the lowest-placed family that has not yet sat out
+    const had = new Set(S.rounds.map(r => r.bye));
+    bye = order.slice().reverse().find(k => !had.has(k)) || order[order.length - 1];
+    order = order.filter(k => k !== bye);
+  }
+  const pairs = (pairUp(order) || chunk(order)).map(p => Math.random() < 0.5 ? [p[1], p[0]] : p);
+  S.rounds.push({spec:ROUNDS[S.rounds.length], pairs, bye});
+  save();
+}
+function pairUp(order){                   // adjacent by standing, backtracking past repeats
+  if(!order.length) return [];
+  const [first, ...rest] = order;
+  for(let i = 0; i < rest.length; i++){
+    if(met(first, rest[i])) continue;
+    const tail = pairUp(rest.filter((_, j) => j !== i));
+    if(tail) return [[first, rest[i]], ...tail];
+  }
+  return null;
+}
+function chunk(order){ const out = []; for(let i = 0; i + 1 < order.length; i += 2) out.push([order[i], order[i+1]]); return out; }
 
-function verdict(outcome){          // 1 = left, 0 = right, 0.5 = tie
-  if(!pair) return;
-  const ra = S.elo[pair.a], rb = S.elo[pair.b];
-  const ea = 1/(1+Math.pow(10,(rb-ra)/400));
-  S.elo[pair.a] = ra + K*(outcome - ea);
-  S.elo[pair.b] = rb + K*((1-outcome) - (1-ea));
-  S.seen[pair.a]++; S.seen[pair.b]++;
-  S.done.push({a:pair.a, b:pair.b, spec:pair.spec, o:outcome});
-  save(); nextPair(); paint();
+function verdict(outcome){
+  const p = current();
+  if(!p) return;
+  S.done.push({a:p.a, b:p.b, spec:p.spec, round:p.round, o:outcome});
+  save(); advance(); paint();
 }
 
 /* ============================ rendering ============================ */
 function paint(){
-  document.getElementById("meter").style.width =
-    Math.min(100, 100*S.done.length/PAIRS_TARGET) + "%";
+  document.getElementById("meter").style.width = Math.min(100, 100 * S.done.length / TOTAL) + "%";
   if(view === "compare") paintCompare();
   if(view === "rate")    paintRate();
+  if(view === "browse")  paintBrowse();
   if(view === "results") paintResults();
   paintDock();
 }
 
 function paintCompare(){
-  const host = document.getElementById("cmp-body");
-  if(!pair){
+  const host = document.getElementById("cmp-body"), p = current();
+  if(!p){
     host.innerHTML =
-      '<h2 class="prompt">Blind round complete</h2>' +
-      '<p class="sub">' + S.done.length + ' judgements recorded. Rate the finalists part by part next, ' +
-      'or look at the standings.</p>';
+      '<h2 class="prompt">Blind rounds complete</h2>' +
+      '<p class="sub">' + S.done.length + ' judgements over ' + ROUNDS.length + ' rounds. ' +
+      'Rate the finalists part by part next, or look at the standings.</p>';
     return;
   }
-  const sp = SPECS.find(s => s[0] === pair.spec);
+  const sp = SPECS.find(s => s[0] === p.spec);
   host.innerHTML =
+    '<p class="round">Round ' + (p.round + 1) + ' of ' + ROUNDS.length +
+      ' · pair ' + (p.index + 1) + ' of ' + p.of + '</p>' +
     '<h2 class="prompt">' + sp[1] + '</h2>' +
     '<p class="sub">' + sp[2] + '</p>' +
-    '<div class="duo">' +
-      side("A", "left") + side("B", "right") +
-    '</div>';
-  put(host.querySelector("#pa"), pair.a, pair.spec, invert);
-  put(host.querySelector("#pb"), pair.b, pair.spec, invert);
+    '<div class="duo">' + side("A", "left") + side("B", "right") + '</div>';
+  put(host.querySelector("#pa"), p.a, p.spec, invert);
+  put(host.querySelector("#pb"), p.b, p.spec, invert);
   host.querySelector("#ba").onclick = () => verdict(1);
   host.querySelector("#bb").onclick = () => verdict(0);
 }
@@ -342,18 +405,16 @@ function side(letter, which){
 }
 
 function paintDock(){
-  const d = document.getElementById("dockin");
+  const d = document.getElementById("dockin"), p = current();
   if(view === "compare"){
-    d.innerHTML = pair
-      ? '<span class="count">Judgement ' + (S.done.length+1) + ' of ' + PAIRS_TARGET + '</span>' +
-        '<label class="sw"><input type="checkbox" id="d-inv"' + (invert?" checked":"") + '> Dark screen</label>' +
-        '<button id="d-tie">No preference <kbd>space</kbd></button>' +
-        '<button id="d-skip">Skip</button>'
-      : '<span class="count">Blind round complete</span>' +
+    d.innerHTML = p
+      ? '<span class="count">Judgement ' + (S.done.length + 1) + ' of ' + TOTAL + '</span>' +
+        '<label class="sw"><input type="checkbox" id="d-inv"' + (invert ? " checked" : "") + '> Dark screen</label>' +
+        '<button id="d-tie">No preference <kbd>space</kbd></button>'
+      : '<span class="count">Blind rounds complete</span>' +
         '<button id="d-rate">Rate the finalists</button>' +
         '<button class="go" id="d-res">See standings</button>';
     const t = d.querySelector("#d-tie");  if(t) t.onclick = () => verdict(0.5);
-    const s = d.querySelector("#d-skip"); if(s) s.onclick = () => { nextPair(); paint(); };
     const i = d.querySelector("#d-inv");  if(i) i.onchange = e => { invert = e.target.checked; paint(); };
     const r = d.querySelector("#d-rate"); if(r) r.onclick = () => go("rate");
     const v = d.querySelector("#d-res");  if(v) v.onclick = () => go("results");
@@ -369,7 +430,7 @@ function paintDock(){
     d.querySelector("#d-back").onclick = () => go("compare");
     d.querySelector("#d-reset").onclick = () => {
       if(confirm("Discard all judgements and start over?")){
-        S = BLANK(); save(); nextPair(); go("compare");
+        S = BLANK(); save(); advance(); go("compare");
       }
     };
   }
@@ -378,31 +439,30 @@ function paintDock(){
 /* ---------- component ratings ---------- */
 function paintRate(){
   const host = document.getElementById("rate-body");
-  if(S.done.length < 12){
-    host.innerHTML = '<p class="empty">Make at least a dozen comparisons first — ' +
-      'the finalists are chosen from the blind round, and right now the standings are noise.</p>';
+  if(roundsDone() < 1){
+    host.innerHTML = '<p class="empty">Finish the first round first. The finalists are the top ' +
+      FINALISTS + ' of the standings, and until a round is complete the standings mean nothing.</p>';
     return;
   }
-  const fin = ranked().slice(0, FINALISTS);
+  const fin = ranked().slice(0, FINALISTS).map(byKey);
   host.innerHTML = fin.map(f => {
     const c = S.comp[f.key] || {};
     return '<section style="margin-bottom:34px">' +
       '<div class="sidehead"><span class="tag">' + f.label + '</span>' +
         '<span>' + f.lineage + '</span></div>' +
-      '<div class="duo">' +
-        '<div class="paper" data-k="' + f.key + '" data-s="paper"></div>' +
-        '<div class="paper" data-k="' + f.key + '" data-s="chars"></div>' +
+      '<div class="duo">' + SPECS.map(s =>
+        '<div><div class="sidehead"><span>' + s[1] + '</span></div>' +
+        '<div class="paper" data-k="' + f.key + '" data-s="' + s[0] + '"></div></div>').join("") +
       '</div>' +
-      '<div class="dims">' + DIMS.map(([dk,dl,dh]) =>
-        '<div class="dim"><p>' + dl + '<small>' + dh + '</small></p>' +
+      '<div class="dims">' + DIMS.map(([dk, dl, dh, look]) =>
+        '<div class="dim"><p>' + dl + '<small>' + dh + ' Look at: ' + look + '.</small></p>' +
         '<div class="scale">' + [1,2,3,4,5].map(n =>
           '<button data-f="' + f.key + '" data-d="' + dk + '" data-n="' + n + '" ' +
           'aria-pressed="' + (c[dk] === n) + '">' + n + '</button>').join("") +
         '</div></div>').join("") +
       '</div></section>';
   }).join("");
-  host.querySelectorAll(".paper[data-k]").forEach(el =>
-    put(el, el.dataset.k, el.dataset.s, false));
+  host.querySelectorAll(".paper[data-k]").forEach(el => put(el, el.dataset.k, el.dataset.s, false));
   host.querySelectorAll(".scale button").forEach(b => b.onclick = () => {
     const f = b.dataset.f;
     S.comp[f] = S.comp[f] || {};
@@ -412,6 +472,7 @@ function paintRate(){
 }
 
 /* ---------- results ---------- */
+const half = n => (Number.isInteger(n) ? String(n) : Math.floor(n) + "½").replace(/^0½$/, "½");
 function paintResults(){
   const host = document.getElementById("res-body");
   if(!S.done.length){
@@ -419,21 +480,23 @@ function paintResults(){
       '<p class="empty">Make some comparisons and the standings will build here.</p>';
     return;
   }
-  const r = ranked(), top = S.elo[r[0].key], bot = S.elo[r[r.length-1].key], span = Math.max(1, top-bot);
+  const r = ranked(), top = points(r[0]), bot = points(r[r.length - 1]), span = Math.max(1, top - bot);
   let html = '<h2 class="prompt">Standings</h2>' +
-    '<p class="sub">Elo from ' + S.done.length + ' blind comparisons. Treat gaps under about ' +
-    '30 points as noise; what matters is which families cluster at the top.</p>' +
-    '<table><tr><th>Family</th><th>Lineage</th><th class="num">Rating</th>' +
-    '<th class="num">Seen</th><th class="num">Detail</th></tr>' +
-    r.map((f,i) => {
-      const c = S.comp[f.key], vals = c ? Object.values(c) : [];
-      const avg = vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1) : "—";
-      return '<tr><td><strong>' + (i+1) + '. ' + f.label + '</strong>' +
-        '<span class="rankbar" style="width:' +
-        Math.max(3, 100*(S.elo[f.key]-bot)/span) + '%"></span></td>' +
+    '<p class="sub">Swiss standings after ' + roundsDone() + ' of ' + ROUNDS.length + ' rounds and ' +
+    S.done.length + ' blind judgements. One point for a win, half for no preference or for sitting out ' +
+    'a round. Buchholz is the sum of each opponent\'s points, the usual tiebreak: it rewards wins ' +
+    'against strong families.</p>' +
+    '<table><tr><th>Family</th><th>Lineage</th><th class="num">Points</th>' +
+    '<th class="num">Buchholz</th><th class="num">W / T / L</th><th class="num">Detail</th></tr>' +
+    r.map((k, i) => {
+      const f = byKey(k), rec = record(k), c = S.comp[k], vals = c ? Object.values(c) : [];
+      const avg = vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1) : "—";
+      return '<tr><td><strong>' + (i + 1) + '. ' + f.label + '</strong>' +
+        '<span class="rankbar" style="width:' + Math.max(3, 100 * (points(k) - bot) / span) + '%"></span></td>' +
         '<td class="note">' + f.lineage + '</td>' +
-        '<td class="num">' + Math.round(S.elo[f.key]) + '</td>' +
-        '<td class="num">' + comparisonsFor(f.key) + '</td>' +
+        '<td class="num">' + half(points(k)) + '</td>' +
+        '<td class="num">' + half(buchholz(k)) + '</td>' +
+        '<td class="num">' + rec.w + ' / ' + rec.t + ' / ' + rec.l + '</td>' +
         '<td class="num">' + avg + '</td></tr>';
     }).join("") + '</table>';
 
@@ -441,9 +504,9 @@ function paintResults(){
   const rated = Object.keys(S.comp);
   if(rated.length >= 2){
     html += '<div class="brief"><h3>Where each dimension was strongest</h3><ul>' +
-      DIMS.map(([dk,dl]) => {
+      DIMS.map(([dk, dl]) => {
         let best = null, bv = -1;
-        rated.forEach(k => { const v = (S.comp[k]||{})[dk]; if(v > bv){ bv = v; best = k; } });
+        rated.forEach(k => { const v = (S.comp[k] || {})[dk]; if(v > bv){ bv = v; best = k; } });
         if(bv < 0) return "";
         return '<li>' + dl + ': <span class="winner">' + byKey(best).label +
                '</span> (' + bv + ' of 5)</li>';
@@ -455,19 +518,23 @@ function paintResults(){
     '<button class="mini" id="copy">Copy results as text</button></div>';
   host.innerHTML = html;
   document.getElementById("copy").onclick = async () => {
-    const lines = ["Font bench — " + S.done.length + " blind comparisons", ""];
-    ranked().forEach((f,i) => {
-      const c = S.comp[f.key];
-      lines.push((i+1) + ". " + f.label + "  Elo " + Math.round(S.elo[f.key]) +
-        (c ? "  [" + DIMS.filter(d=>c[d[0]]).map(d => d[1] + " " + c[d[0]]).join(", ") + "]" : ""));
+    const lines = ["Font bench: " + S.done.length + " blind judgements, " + roundsDone() + " of " +
+                   ROUNDS.length + " Swiss rounds", ""];
+    ranked().forEach((k, i) => {
+      const f = byKey(k), rec = record(k), c = S.comp[k];
+      lines.push((i + 1) + ". " + f.label + "  " + half(points(k)) + " pts, Buchholz " + half(buchholz(k)) +
+        ", " + rec.w + "/" + rec.t + "/" + rec.l +
+        (c ? "  [" + DIMS.filter(d => c[d[0]]).map(d => d[1] + " " + c[d[0]]).join(", ") + "]" : ""));
     });
+    lines.push("", "Rounds:");
+    S.rounds.forEach((r, i) => lines.push("  " + (i + 1) + ". " + SPECS.find(s => s[0] === r.spec)[1] +
+      (r.bye ? ", sat out: " + byKey(r.bye).label : "")));
     try{ await navigator.clipboard.writeText(lines.join("\n"));
          document.getElementById("copy").textContent = "Copied"; }catch(e){}
   };
 }
 
 /* ---------- browse ---------- */
-let invert = false;
 function buildBrowse(){
   const f1 = document.getElementById("b-font"), f2 = document.getElementById("b-font2"),
         sp = document.getElementById("b-spec");
@@ -475,16 +542,15 @@ function buildBrowse(){
     f1.add(new Option(f.label, f.key));
     f2.add(new Option(f.label, f.key));
   });
-  f2.insertBefore(new Option("— nothing alongside —",""), f2.firstChild);
+  f2.insertBefore(new Option("— nothing alongside —", ""), f2.firstChild);
   f2.value = "";
   SPECS.forEach(s => sp.add(new Option(s[1], s[0])));
-  [f1,f2,sp].forEach(el => el.onchange = paintBrowse);
+  [f1, f2, sp].forEach(el => el.onchange = paintBrowse);
   document.getElementById("b-invert").onchange = e => { invert = e.target.checked; paintBrowse(); };
   document.getElementById("meta").innerHTML =
     '<tr><th>Family</th><th>Maths font</th><th>Licence</th><th>Character</th></tr>' +
     FONTS.map(f => '<tr><td><strong>' + f.label + '</strong></td><td class="note">' + f.math +
       '</td><td class="note">' + f.lic + '</td><td class="note">' + f.lineage + '</td></tr>').join("");
-  paintBrowse();
 }
 function paintBrowse(){
   const a = document.getElementById("b-font").value,
@@ -500,22 +566,20 @@ function paintBrowse(){
 }
 
 /* ============================ nav ============================ */
-let view = "compare";
 function go(v){
   view = v;
-  ["compare","rate","browse","results"].forEach(k => {
-    document.getElementById("v-"+k).classList.toggle("on", k===v);
-    document.getElementById("nav-"+k).setAttribute("aria-current", String(k===v));
+  ["compare", "rate", "browse", "results"].forEach(k => {
+    document.getElementById("v-" + k).classList.toggle("on", k === v);
+    document.getElementById("nav-" + k).setAttribute("aria-current", String(k === v));
   });
-  if(v === "browse") paintBrowse();
   paint();
-  window.scrollTo(0,0);
+  window.scrollTo(0, 0);
 }
-["compare","rate","browse","results"].forEach(k =>
-  document.getElementById("nav-"+k).onclick = () => go(k));
+["compare", "rate", "browse", "results"].forEach(k =>
+  document.getElementById("nav-" + k).onclick = () => go(k));
 
 document.addEventListener("keydown", e => {
-  if(view !== "compare" || !pair) return;
+  if(view !== "compare" || !current() || e.target.tagName === "SELECT") return;
   if(e.key === "ArrowLeft"){ e.preventDefault(); verdict(1); }
   if(e.key === "ArrowRight"){ e.preventDefault(); verdict(0); }
   if(e.key === " "){ e.preventDefault(); verdict(0.5); }

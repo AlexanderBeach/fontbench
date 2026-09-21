@@ -1,0 +1,396 @@
+<title>Font Final</title>
+<style>
+:root{
+  box-sizing:border-box;
+  --bg:#ececeb; --panel:#fbfbfa; --ink:#191b1e; --dim:#63686e; --rule:#d3d4d2;
+  --accent:#2f6072; --warm:#8a5a35; --paper:#ffffff; --shadow:rgba(20,22,26,.13);
+  --ui:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#121316; --panel:#1a1c1f; --ink:#e7e8e6; --dim:#9aa0a6; --rule:#2e3136;
+    --accent:#7fb6c9; --warm:#c99a63; --shadow:rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121316; --panel:#1a1c1f; --ink:#e7e8e6; --dim:#9aa0a6; --rule:#2e3136;
+  --accent:#7fb6c9; --warm:#c99a63; --shadow:rgba(0,0,0,.5);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+a{color:var(--accent)}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--panel);border-bottom:1px solid var(--rule)}
+.bar{display:flex;align-items:center;gap:14px;padding:9px 16px;flex-wrap:wrap}
+.mark{font-weight:600;letter-spacing:-.01em;margin-right:2px}
+.mark span{color:var(--dim);font-weight:400}
+nav{display:flex;gap:2px;margin-left:auto}
+nav button{background:none;border:1px solid transparent;border-radius:6px;padding:5px 11px;cursor:pointer;color:var(--dim)}
+nav button[aria-current="true"]{color:var(--ink);border-color:var(--rule);background:var(--bg)}
+nav button:hover{color:var(--ink)}
+.meter{height:2px;background:var(--rule)}
+.meter i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s ease}
+main{max-width:1180px;margin:0 auto;padding-block:22px 132px;padding-inline:16px}
+.view{display:none}
+.view.on{display:block}
+/* Each specimen is drawn at its typeset size: one PostScript point is 4/3 CSS
+   pixels. A paper narrower than its specimen scrolls sideways. */
+.paper{background:var(--paper);border-radius:3px;padding:20px 20px 16px;box-shadow:0 1px 2px var(--shadow),0 8px 24px -12px var(--shadow);overflow-x:auto}
+.paper svg{display:block;height:auto}
+.paper.inverted{background:#16181b}
+.paper.inverted svg{filter:invert(1) hue-rotate(180deg)}
+.duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:820px){.duo{grid-template-columns:minmax(0,1fr)}}
+.side{position:relative;min-width:0}
+.sidehead{display:flex;align-items:baseline;gap:8px;margin:0 2px 7px;font-size:13px;color:var(--dim)}
+.tag{font-weight:600;color:var(--ink);font-size:14px;border:1px solid var(--rule);border-radius:4px;padding:0 7px}
+.pick{width:100%;margin-top:10px;padding:10px;cursor:pointer;background:var(--panel);border:1px solid var(--rule);border-radius:6px}
+.pick:hover{border-color:var(--accent);color:var(--accent)}
+.pick kbd,.dock kbd{font:inherit;font-size:12px;color:var(--dim);border:1px solid var(--rule);border-radius:3px;padding:0 5px;margin-left:6px}
+.prompt{margin:0 0 4px;font-size:19px;letter-spacing:-.01em;text-wrap:balance}
+.sub{margin:0 0 20px;color:var(--dim);font-size:14px;max-width:70ch}
+.round{margin:0 0 6px;color:var(--accent);font-size:13px;font-weight:600;letter-spacing:.02em;text-transform:uppercase}
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--panel);border-top:1px solid var(--rule);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+.dockin{max-width:1180px;margin:0 auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.dock .count{color:var(--dim);font-size:13px;margin-right:auto}
+.dock button{background:var(--bg);border:1px solid var(--rule);border-radius:6px;padding:8px 14px;cursor:pointer}
+.dock button:hover{border-color:var(--accent)}
+.dock button.go{background:var(--accent);border-color:var(--accent);color:#fff}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+select,.mini{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:6px 10px;cursor:pointer;color:inherit;font:inherit}
+label.sw{display:inline-flex;gap:6px;align-items:center;color:var(--dim);font-size:13px;cursor:pointer}
+.dims{display:grid;gap:12px;margin-top:18px}
+.dim{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 12px;background:var(--panel);border:1px solid var(--rule);border-radius:7px}
+.dim p{margin:0;font-size:14px}
+.dim small{display:block;color:var(--dim);font-size:12.5px;line-height:1.35}
+.scale{display:flex;gap:4px}
+.scale button{width:32px;height:32px;border:1px solid var(--rule);background:var(--bg);border-radius:5px;cursor:pointer;font-size:13px}
+.scale button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{color:var(--dim);font-weight:500;font-size:13px}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+td.c,th.c{text-align:center;font-variant-numeric:tabular-nums;white-space:nowrap}
+td.win{color:var(--accent);font-weight:600}
+td.loss{color:var(--dim)}
+.rankbar{display:block;height:4px;background:var(--accent);border-radius:2px;margin-top:5px}
+.note{color:var(--dim);font-size:13.5px;max-width:70ch}
+.brief{background:var(--panel);border:1px solid var(--rule);border-radius:8px;padding:16px 18px;margin-top:22px}
+.brief h3{margin:0 0 10px;font-size:15px}
+.brief li{margin-bottom:7px;font-size:14px}
+.winner{color:var(--warm);font-weight:600}
+.empty{color:var(--dim);padding:30px 0;max-width:60ch}
+.loading{padding:60px 0;color:var(--dim)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header>
+  <div class="bar">
+    <div class="mark">Font final <span id="cohort">— loading</span></div>
+    <label class="sw">Size
+      <select id="zoom" title="100 % draws every specimen at its typeset size, 10.5 pt body text">
+        <option value="1">100 % (as typeset)</option>
+        <option value="1.25">125 %</option>
+        <option value="1.5">150 %</option>
+        <option value="2">200 %</option>
+      </select>
+    </label>
+    <nav>
+      <button id="nav-compare" aria-current="true">Compare</button>
+      <button id="nav-rate">Rate details</button>
+      <button id="nav-browse">Browse</button>
+      <button id="nav-results">Results</button>
+    </nav>
+  </div>
+  <div class="meter"><i id="meter"></i></div>
+</header>
+
+<main>
+  <section id="v-compare" class="view on">
+    <div id="cmp-body" class="loading">Decompressing the specimens…</div>
+  </section>
+  <section id="v-rate" class="view">
+    <h2 class="prompt">Rate the finalists part by part</h2>
+    <p class="sub">Score each dimension 1 (weak) to 5 (excellent). Names are shown here, so do this after the blind rounds.
+      Where two finalists split the dimensions between them, that split is the brief for a hybrid.</p>
+    <div id="rate-body"></div>
+  </section>
+  <section id="v-browse" class="view">
+    <h2 class="prompt">Browse any specimen</h2>
+    <p class="sub">Real LuaLaTeX output with each family's own matched maths font, normalised to a common x-height.</p>
+    <div class="row">
+      <select id="b-font"></select>
+      <select id="b-spec"></select>
+      <select id="b-font2"></select>
+      <label class="sw"><input type="checkbox" id="b-invert"> Simulate dark screen</label>
+    </div>
+    <div class="duo" id="browse-duo"></div>
+  </section>
+  <section id="v-results" class="view"><div id="res-body"></div></section>
+</main>
+<div class="dock" id="dock"><div class="dockin" id="dockin"></div></div>
+
+<script id="bundle" type="text/plain">__BUNDLE__</script>
+<script>
+"use strict";
+const FONTS = __ROSTER__;
+const SPECS = [
+  ["paper",   "Body text of a paper",  "Read it as you would read a paper. Prefer the block whose grey is more even, with no dark clots or pale gaps, whose words hold together, and whose inline maths sits in the line without jumping out in size or weight. Ignore whether you recognise the face."],
+  ["display", "Displayed equations",   "Judge the maths as maths. Prefer the side whose fraction bars, radicals and large brackets match the weight of the letters, whose subscripts and superscripts are still legible, whose v and ν, x and χ are told apart, and whose italic variables look like the same design as the text."],
+  ["theorem", "Theorem and proof",     "Judge the hierarchy at a glance. Prefer the side where the bold head, the italic statement, the small-caps PROOF and the roman proof are each clearly a different voice, and where the displayed line and the prose around it belong to one design."],
+  ["ui",      "Screen and small sizes","Judge legibility, not beauty. Prefer the side where 1, l and I, 0 and O, rn and m are told apart, where the figures line up in the table, and where the 8 pt footnote is still comfortable to read."],
+  ["slide",   "A slide",               "Judge presence from the back of a room. Prefer the side whose title carries at a distance, whose bullets hold as lines rather than falling apart, and whose equation still looks like it belongs to the text."],
+  ["chars",   "Character detail",      "Judge the alphabet as a set. Prefer the side with consistent stroke weight across letters, Greek that matches the Latin, blackboard-bold and calligraphic alphabets that are distinct from each other, and operators that sit on the same line as the letters."]
+];
+const DIMS = [
+  ["texture",  "Paragraph colour",   "The even grey of a block of text at reading size.", "Body text of a paper"],
+  ["letters",  "Letterforms",        "Terminals, counters, the shapes you would want to keep.", "Character detail"],
+  ["figures",  "Numerals",           "Do the digits sit well in prose and align in tables?", "Screen and small sizes, and the figures line in Character detail"],
+  ["italic",   "Italic",             "Distinct enough from roman, without shouting.", "Theorem and proof, and the italic line in Character detail"],
+  ["greek",    "Greek and variables","α, β, θ, Γ, Ω and italic maths letters.", "Character detail, and the variables in Displayed equations"],
+  ["structs",  "Maths structures",   "Fraction bars, radicals, big operators, stretched delimiters.", "Displayed equations"],
+  ["small",    "Small sizes",        "Legibility at 8–9 pt and on screen.", "Screen and small sizes"],
+  ["presence", "Headline presence",  "How it carries a slide title at 21 pt.", "A slide"]
+];
+/* A round robin: every finalist meets every other on each of these specimens.
+   All pairs are scheduled up front, since nothing depends on earlier results. */
+const ROUNDS = ["paper", "display", "theorem"];
+const WIN = 1, TIE = 0.5;
+const PT = 96 / 72;
+const ZOOMS = [1, 1.25, 1.5, 2];
+const STORE = "final.v2", ZOOM_STORE = "fontbench.zoom";
+const PAIRS = [];
+for(let i = 0; i < FONTS.length; i++) for(let j = i + 1; j < FONTS.length; j++) PAIRS.push([FONTS[i].key, FONTS[j].key]);
+const TOTAL = ROUNDS.length * PAIRS.length;
+
+const BLANK = () => ({version:1, rounds:[], done:[], comp:{}});
+let S = BLANK(), SVG = null, zoom = 1, invert = false, view = "compare";
+const byKey = k => FONTS.find(f => f.key === k);
+function save(){ try{ localStorage.setItem(STORE, JSON.stringify(S)); }catch(e){} }
+function load(){
+  try{
+    const p = JSON.parse(localStorage.getItem(STORE) || "null");
+    if(p && p.version === 1 && Array.isArray(p.rounds) && Array.isArray(p.done)) S = p;
+    const z = Number(localStorage.getItem(ZOOM_STORE));
+    if(ZOOMS.includes(z)) zoom = z;
+  }catch(e){}
+}
+function schedule(){
+  if(S.rounds.length) return;
+  S.rounds = ROUNDS.map(spec => {
+    const pairs = PAIRS.map(p => Math.random() < 0.5 ? [p[1], p[0]] : [p[0], p[1]]);
+    for(let i = pairs.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [pairs[i], pairs[j]] = [pairs[j], pairs[i]]; }
+    return {spec, pairs};
+  });
+  save();
+}
+
+async function boot(){
+  const b64 = document.getElementById("bundle").textContent.trim();
+  const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+  if(!("DecompressionStream" in window)) throw new Error("This browser cannot unpack the specimens (needs DecompressionStream).");
+  const s = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
+  SVG = JSON.parse(await new Response(s).text());
+  load(); schedule();
+  document.getElementById("cohort").textContent = "— " + FONTS.length + " finalists, every pair on " + ROUNDS.length + " specimens";
+  const zs = document.getElementById("zoom");
+  zs.value = String(zoom);
+  zs.onchange = () => { zoom = Number(zs.value); try{ localStorage.setItem(ZOOM_STORE, String(zoom)); }catch(e){} paint(); };
+  buildBrowse(); paint();
+}
+function put(el, key, spec, inverted){
+  el.innerHTML = SVG[key + "_" + spec] || "";
+  const s = el.querySelector("svg");
+  if(s){
+    const widthPt = Number(s.getAttribute("viewBox").split(/\s+/)[2]);
+    s.removeAttribute("width"); s.removeAttribute("height");
+    s.style.width = (widthPt * PT * zoom).toFixed(2) + "px";
+  }
+  el.classList.toggle("inverted", !!inverted);
+}
+
+/* ---------- standings ---------- */
+function points(k, spec){
+  let p = 0;
+  for(const d of S.done){
+    if(spec && d.spec !== spec) continue;
+    if(d.a === k) p += d.o; else if(d.b === k) p += 1 - d.o;
+  }
+  return p;
+}
+function versus(a, b){                     // a's record against b across all specimens
+  const r = {w:0, t:0, l:0};
+  for(const d of S.done){
+    let mine;
+    if(d.a === a && d.b === b) mine = d.o; else if(d.a === b && d.b === a) mine = 1 - d.o; else continue;
+    if(mine === WIN) r.w++; else if(mine === TIE) r.t++; else r.l++;
+  }
+  return r;
+}
+function ranked(){ return FONTS.map(f => f.key).sort((a, b) => points(b) - points(a) || a.localeCompare(b)); }
+function current(){
+  for(let i = 0; i < S.rounds.length; i++){
+    const r = S.rounds[i], n = S.done.filter(d => d.round === i).length;
+    if(n < r.pairs.length) return {a:r.pairs[n][0], b:r.pairs[n][1], spec:r.spec, round:i, index:n, of:r.pairs.length};
+  }
+  return null;
+}
+function verdict(outcome){
+  const p = current();
+  if(!p) return;
+  S.done.push({a:p.a, b:p.b, spec:p.spec, round:p.round, o:outcome});
+  save(); paint();
+}
+
+/* ---------- rendering ---------- */
+function paint(){
+  document.getElementById("meter").style.width = Math.min(100, 100 * S.done.length / TOTAL) + "%";
+  if(view === "compare") paintCompare();
+  if(view === "rate")    paintRate();
+  if(view === "browse")  paintBrowse();
+  if(view === "results") paintResults();
+  paintDock();
+}
+function paintCompare(){
+  const host = document.getElementById("cmp-body"), p = current();
+  if(!p){
+    host.innerHTML = '<h2 class="prompt">Final complete</h2><p class="sub">' + S.done.length +
+      ' judgements, every pair on every specimen. Rate the finalists part by part next, or see the table.</p>';
+    return;
+  }
+  const sp = SPECS.find(s => s[0] === p.spec);
+  host.innerHTML = '<p class="round">Specimen ' + (p.round + 1) + ' of ' + ROUNDS.length + ' · pair ' + (p.index + 1) + ' of ' + p.of + '</p>' +
+    '<h2 class="prompt">' + sp[1] + '</h2><p class="sub">' + sp[2] + '</p>' +
+    '<div class="duo">' + side("A", "left") + side("B", "right") + '</div>';
+  put(host.querySelector("#pa"), p.a, p.spec, invert);
+  put(host.querySelector("#pb"), p.b, p.spec, invert);
+  host.querySelector("#ba").onclick = () => verdict(1);
+  host.querySelector("#bb").onclick = () => verdict(0);
+}
+function side(letter, which){
+  const id = which === "left" ? "pa" : "pb", b = which === "left" ? "ba" : "bb";
+  return '<div class="side"><div class="sidehead"><span class="tag">' + letter + '</span></div><div class="paper" id="' + id + '"></div>' +
+    '<button class="pick" id="' + b + '">Prefer ' + letter + '<kbd>' + (which === "left" ? "←" : "→") + '</kbd></button></div>';
+}
+function paintDock(){
+  const d = document.getElementById("dockin"), p = current();
+  if(view === "compare"){
+    d.innerHTML = p
+      ? '<span class="count">Judgement ' + (S.done.length + 1) + ' of ' + TOTAL + '</span>' +
+        '<label class="sw"><input type="checkbox" id="d-inv"' + (invert ? " checked" : "") + '> Dark screen</label>' +
+        '<button id="d-tie">No preference <kbd>space</kbd></button>'
+      : '<span class="count">Final complete</span><button id="d-rate">Rate the finalists</button><button class="go" id="d-res">See the table</button>';
+    const t = d.querySelector("#d-tie"); if(t) t.onclick = () => verdict(0.5);
+    const i = d.querySelector("#d-inv"); if(i) i.onchange = e => { invert = e.target.checked; paint(); };
+    const r = d.querySelector("#d-rate"); if(r) r.onclick = () => go("rate");
+    const v = d.querySelector("#d-res"); if(v) v.onclick = () => go("results");
+  }else if(view === "rate"){
+    d.innerHTML = '<span class="count">' + Object.keys(S.comp).length + ' of ' + FONTS.length + ' finalists rated</span><button class="go" id="d-res2">See the table</button>';
+    d.querySelector("#d-res2").onclick = () => go("results");
+  }else{
+    d.innerHTML = '<span class="count">' + S.done.length + ' judgements recorded</span><button id="d-back">Back to comparing</button><button id="d-reset">Start over</button>';
+    d.querySelector("#d-back").onclick = () => go("compare");
+    d.querySelector("#d-reset").onclick = () => { if(confirm("Discard all judgements and start over?")){ S = BLANK(); save(); schedule(); go("compare"); } };
+  }
+}
+function paintRate(){
+  const host = document.getElementById("rate-body");
+  host.innerHTML = FONTS.map(f => {
+    const c = S.comp[f.key] || {};
+    return '<section style="margin-bottom:34px"><div class="sidehead"><span class="tag">' + f.label + '</span><span>' + f.lineage + '</span></div>' +
+      '<div class="duo">' + SPECS.map(s => '<div><div class="sidehead"><span>' + s[1] + '</span></div><div class="paper" data-k="' + f.key + '" data-s="' + s[0] + '"></div></div>').join("") + '</div>' +
+      '<div class="dims">' + DIMS.map(([dk, dl, dh, look]) => '<div class="dim"><p>' + dl + '<small>' + dh + ' Look at: ' + look + '.</small></p><div class="scale">' +
+        [1,2,3,4,5].map(n => '<button data-f="' + f.key + '" data-d="' + dk + '" data-n="' + n + '" aria-pressed="' + (c[dk] === n) + '">' + n + '</button>').join("") +
+        '</div></div>').join("") + '</div></section>';
+  }).join("");
+  host.querySelectorAll(".paper[data-k]").forEach(el => put(el, el.dataset.k, el.dataset.s, false));
+  host.querySelectorAll(".scale button").forEach(b => b.onclick = () => {
+    S.comp[b.dataset.f] = S.comp[b.dataset.f] || {};
+    S.comp[b.dataset.f][b.dataset.d] = +b.dataset.n;
+    save(); paintRate(); paintDock();
+  });
+}
+const half = n => (Number.isInteger(n) ? String(n) : Math.floor(n) + "½").replace(/^0½$/, "½");
+function paintResults(){
+  const host = document.getElementById("res-body");
+  if(!S.done.length){ host.innerHTML = '<h2 class="prompt">Nothing judged yet</h2><p class="empty">Make some comparisons and the table will build here.</p>'; return; }
+  const r = ranked(), maxPts = (FONTS.length - 1) * ROUNDS.length;
+  let html = '<h2 class="prompt">Round robin table</h2>' +
+    '<p class="sub">' + S.done.length + ' of ' + TOTAL + ' judgements. One point per win, half for no preference, out of ' + maxPts +
+    '. The columns split the total by specimen, and the head-to-head grid shows each row\'s record against each column as wins / ties / losses across the ' +
+    ROUNDS.length + ' specimens.</p>' +
+    '<div style="overflow-x:auto"><table><tr><th>Family</th><th class="num">Total</th>' +
+    ROUNDS.map(s => '<th class="num">' + SPECS.find(x => x[0] === s)[1] + '</th>').join("") + '<th class="num">Detail</th></tr>' +
+    r.map((k, i) => {
+      const f = byKey(k), c = S.comp[k], vals = c ? Object.values(c) : [];
+      const avg = vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1) : "—";
+      return '<tr><td><strong>' + (i + 1) + '. ' + f.label + '</strong><span class="rankbar" style="width:' + Math.max(3, 100 * points(k) / maxPts) + '%"></span></td>' +
+        '<td class="num">' + half(points(k)) + '</td>' + ROUNDS.map(s => '<td class="num">' + half(points(k, s)) + '</td>').join("") + '<td class="num">' + avg + '</td></tr>';
+    }).join("") + '</table></div>' +
+    '<h3 style="margin-top:28px;font-size:15px">Head to head</h3><div style="overflow-x:auto"><table><tr><th></th>' +
+    r.map(k => '<th class="c">' + byKey(k).label + '</th>').join("") + '</tr>' +
+    r.map(a => '<tr><td><strong>' + byKey(a).label + '</strong></td>' + r.map(b => {
+      if(a === b) return '<td class="c">·</td>';
+      const v = versus(a, b), cls = v.w > v.l ? "win" : v.l > v.w ? "loss" : "";
+      return '<td class="c ' + cls + '">' + v.w + ' / ' + v.t + ' / ' + v.l + '</td>';
+    }).join("") + '</tr>').join("") + '</table></div>';
+  const rated = Object.keys(S.comp);
+  if(rated.length >= 2){
+    html += '<div class="brief"><h3>Where each dimension was strongest</h3><ul>' +
+      DIMS.map(([dk, dl]) => {
+        let best = null, bv = -1;
+        rated.forEach(k => { const v = (S.comp[k] || {})[dk]; if(v > bv){ bv = v; best = k; } });
+        return bv < 0 ? "" : '<li>' + dl + ': <span class="winner">' + byKey(best).label + '</span> (' + bv + ' of 5)</li>';
+      }).join("") + '</ul><p class="note">If one family sweeps this list, that is the default and no hybrid is needed. If it splits, these are the borrowings a new design would start from.</p></div>';
+  }
+  html += '<div class="row" style="margin-top:20px"><button class="mini" id="copy">Copy results as text</button></div>';
+  host.innerHTML = html;
+  document.getElementById("copy").onclick = async () => {
+    const lines = ["Font final: " + S.done.length + " of " + TOTAL + " judgements, round robin of " + FONTS.length + " on " + ROUNDS.join(", "), ""];
+    ranked().forEach((k, i) => {
+      const f = byKey(k), c = S.comp[k];
+      lines.push((i + 1) + ". " + f.label + "  " + half(points(k)) + " pts  [" + ROUNDS.map(s => s + " " + half(points(k, s))).join(", ") + "]" +
+        (c ? "  {" + DIMS.filter(d => c[d[0]]).map(d => d[1] + " " + c[d[0]]).join(", ") + "}" : ""));
+    });
+    lines.push("", "Head to head (wins/ties/losses, row against column):");
+    const r = ranked();
+    r.forEach(a => lines.push("  " + byKey(a).label + ": " + r.filter(b => b !== a).map(b => { const v = versus(a, b); return byKey(b).label + " " + v.w + "/" + v.t + "/" + v.l; }).join(", ")));
+    try{ await navigator.clipboard.writeText(lines.join("\n")); document.getElementById("copy").textContent = "Copied"; }catch(e){}
+  };
+}
+function buildBrowse(){
+  const f1 = document.getElementById("b-font"), f2 = document.getElementById("b-font2"), sp = document.getElementById("b-spec");
+  FONTS.forEach(f => { f1.add(new Option(f.label, f.key)); f2.add(new Option(f.label, f.key)); });
+  f2.insertBefore(new Option("— nothing alongside —", ""), f2.firstChild);
+  f2.value = "";
+  SPECS.forEach(s => sp.add(new Option(s[1], s[0])));
+  [f1, f2, sp].forEach(el => el.onchange = paintBrowse);
+  document.getElementById("b-invert").onchange = e => { invert = e.target.checked; paintBrowse(); };
+}
+function paintBrowse(){
+  const a = document.getElementById("b-font").value, b = document.getElementById("b-font2").value,
+        s = document.getElementById("b-spec").value, host = document.getElementById("browse-duo");
+  host.innerHTML = '<div class="side"><div class="sidehead"><span class="tag">' + byKey(a).label + '</span></div><div class="paper" id="ba1"></div></div>' +
+    (b ? '<div class="side"><div class="sidehead"><span class="tag">' + byKey(b).label + '</span></div><div class="paper" id="ba2"></div></div>' : "");
+  put(document.getElementById("ba1"), a, s, invert);
+  if(b) put(document.getElementById("ba2"), b, s, invert);
+}
+function go(v){
+  view = v;
+  ["compare", "rate", "browse", "results"].forEach(k => {
+    document.getElementById("v-" + k).classList.toggle("on", k === v);
+    document.getElementById("nav-" + k).setAttribute("aria-current", String(k === v));
+  });
+  paint(); window.scrollTo(0, 0);
+}
+["compare", "rate", "browse", "results"].forEach(k => document.getElementById("nav-" + k).onclick = () => go(k));
+document.addEventListener("keydown", e => {
+  if(view !== "compare" || !current() || e.target.tagName === "SELECT") return;
+  if(e.key === "ArrowLeft"){ e.preventDefault(); verdict(1); }
+  if(e.key === "ArrowRight"){ e.preventDefault(); verdict(0); }
+  if(e.key === " "){ e.preventDefault(); verdict(0.5); }
+});
+boot().catch(err => { document.getElementById("cmp-body").innerHTML = '<h2 class="prompt">The specimens did not unpack</h2><p class="empty">' + err.message + '</p>'; });
+</script>
