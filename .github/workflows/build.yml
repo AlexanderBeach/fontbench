@@ -1,0 +1,27 @@
+name: Build font bench
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/**
+      - web/**
+      - setup.sh
+      - .github/workflows/build.yml
+  workflow_dispatch:
+
+jobs:
+  build:
+    # Ubuntu 24.04 rather than ubuntu-latest: the font paths in scripts/roster.py
+    # are the ones this release's TeX Live packages install to.
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install TeX Live, fonts and tools
+        run: bash setup.sh
+      - name: Build the page
+        run: python3 scripts/build.py
+      - uses: actions/upload-artifact@v7
+        with:
+          name: font-bench
+          path: dist/font-bench.html
